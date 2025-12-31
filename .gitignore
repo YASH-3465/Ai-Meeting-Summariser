@@ -1,0 +1,28 @@
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+
+# Audio / video files
+*.wav
+*.mp3
+*.mp4
+
+# Models
+models/
+
+# OS files
+.DS_Store
+
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Duplicate notebook files
+*.ipynb.ipynb
