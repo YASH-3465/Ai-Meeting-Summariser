@@ -11,9 +11,9 @@ class MeetingPipeline:
         self.whisper = WhisperEngine()
         self.summariser = MeetingSummariser()
 
-    def run(self, media_path, notify=False):
+    def run(self, media_path, notify=False,translate=False):
         audio_path = extract_audio(media_path)
-        text = self.whisper.transcribe(audio_path)
+        text = self.whisper.transcribe(audio_path,translate=translate)
         cleaned_text = clean_text(text)
 
         raw_summary = self.summariser.summarize(cleaned_text)
@@ -33,7 +33,7 @@ class MeetingPipeline:
         }
 
     # 🔧 For notebook / testing only
-    def run_from_text(self, text, notify=False):
+    def run_from_text(self, text, notify=False,translate=False):
         cleaned_text = clean_text(text)
 
         raw_summary = self.summariser.summarize(cleaned_text)
