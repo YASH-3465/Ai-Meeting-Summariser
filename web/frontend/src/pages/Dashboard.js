@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import ToggleSwitch from "../components/ToggleSwitch";
 
 export default function Dashboard() {
 const navigate = useNavigate();
@@ -71,8 +72,9 @@ setStage("results");
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <h1>Intelligence <span>Terminal</span></h1>
-            <p>Upload your meeting to begin neural extraction</p>
+            <h1>Upload Your<span> Meeting</span></h1>
+            <p>Supported formats: MP3, WAV, MP4
+</p>
           </motion.div>
           
           <div className="engine-status">
@@ -108,27 +110,28 @@ setStage("results");
                 <h2>Start New Analysis</h2>
                 <p>Click anywhere to upload audio or video</p>
                 <div className="supported-formats">MP3 • WAV • MP4 • MOV</div>
-                <div style={{ marginTop: "30px", display: "flex", justifyContent: "center", gap: "30px" }}>
+      <div
+  style={{
+    marginTop: "30px",
+    display: "flex",
+    justifyContent: "center",
+    gap: "30px"
+  }}
+  onClick={(e) => e.stopPropagation()}
+>
+  <ToggleSwitch
+    label="Translate"
+    checked={translate}
+    onChange={setTranslate}
+  />
 
-  <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
-    <input
-      type="checkbox"
-      checked={translate}
-      onChange={() => setTranslate(!translate)}
-    />
-    <span>Translate to English</span>
-  </label>
-
-  <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
-    <input
-      type="checkbox"
-      checked={notify}
-      onChange={() => setNotify(!notify)}
-    />
-    <span>Email Notification</span>
-  </label>
-
+  <ToggleSwitch
+    label="Notify"
+    checked={notify}
+    onChange={setNotify}
+  />
 </div>
+
 
               </motion.div>
             ) : (

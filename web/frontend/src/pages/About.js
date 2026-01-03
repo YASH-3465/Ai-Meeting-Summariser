@@ -29,30 +29,54 @@ export default function About() {
 
         {/* CORE PILLARS SECTION */}
         <div className="pillars-grid">
-          <PillarCard 
-            index={0}
-            title="Research Focus" 
-            items={[
-              { t: "Speech Accuracy", d: "Optimizing Whisper AI for noisy environments." },
-              { t: "Translation", d: "Context-aware multilingual neural mapping." },
-              { t: "Summarization", d: "Abstractive LLM-based insight distillation." },
-              { t: "Extraction", d: "Semantic identification of tasks and dates." }
-            ]}
-            icon="🔬"
-          />
+  <PillarCard 
+    index={0}
+    title="Research & Engineering Focus" 
+    items={[
+      { 
+        t: "Robust Speech Transcription", 
+        d: "Evaluating and fine-tuning Whisper models for real-world meetings with noise, accents, and overlapping speech." 
+      },
+      { 
+        t: "Multilingual Processing", 
+        d: "Automatic translation of non-English meetings into English for unified downstream analysis." 
+      },
+      { 
+        t: "Meeting Summarization", 
+        d: "Hierarchical and abstractive summarization techniques to preserve key decisions and context." 
+      },
+      { 
+        t: "Action & Deadline Extraction", 
+        d: "Rule-based and linguistic NLP methods to accurately identify tasks, owners, and timelines." 
+      }
+    ]}
+    icon="🔬"
+  />
 
-          <PillarCard 
-            index={1}
-            title="Future Scope" 
-            items={[
-              { t: "Calendar Sync", d: "Automated meeting invites and task pushing." },
-              { t: "Authentication", d: "Secure enterprise-grade user management." },
-              { t: "Cloud Scale", d: "Distributed processing for low-latency output." },
-              { t: "Analytics", d: "Visualizing team productivity trends over time." }
-            ]}
-            icon="🚀"
-          />
-        </div>
+  <PillarCard 
+    index={1}
+    title="Future Enhancements" 
+    items={[
+      { 
+        t: "Calendar Integration", 
+        d: "Automatic creation of calendar events and reminders from extracted action items." 
+      },
+      { 
+        t: "User Authentication", 
+        d: "Role-based access control and secure user management for team collaboration." 
+      },
+      { 
+        t: "Scalable Deployment", 
+        d: "Cloud-based processing pipelines for handling large volumes of meetings efficiently." 
+      },
+      { 
+        t: "Insight Analytics", 
+        d: "Visual dashboards to analyze meeting frequency, action completion, and productivity trends." 
+      }
+    ]}
+    icon="💡"
+  />
+</div>
 
         {/* TECH STACK VISUAL */}
         <motion.div 

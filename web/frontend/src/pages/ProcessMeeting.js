@@ -3,9 +3,9 @@ import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 const steps = [
   {
-    title: "Upload Meeting",
-    desc: "Seamlessly ingest MP4, MP3, or WAV files. Our system prepares the buffer for high-speed neural processing.",
-    icon: "📁",
+    title: "Media Ingestion",
+    desc: "Audio or video files are securely uploaded and prepared for processing.",
+    icon: "🔉",
     color: "#00d2ff",
   },
   {
@@ -15,20 +15,20 @@ const steps = [
     color: "#9d50bb",
   },
   {
-    title: "Neural Translation",
-    desc: "Breaking language barriers instantly. Non-English speech is contextually translated into fluent English.",
+    title: "Language Translation (Optional)",
+    desc: "Non-English meetings are translated into English for consistent analysis.",
     icon: "🌐",
     color: "#3a7bd5",
   },
   {
-    title: "AI Summarization",
+    title: "Text Summarization",
     desc: "Large Language Models distill hours of conversation into high-level executive summaries.",
     icon: "📝",
     color: "#00f2fe",
   },
   {
-    title: "Action Extraction",
-    desc: "The final layer. Identifying specific tasks, assignees, and deadlines using semantic analysis.",
+    title: "Action & Deadline Extraction",
+    desc: "Rule-based and linguistic analysis identifies tasks, responsibilities, and timelines.",
     icon: "✅",
     color: "#4facfe",
   },
@@ -62,7 +62,7 @@ export default function ProcessMeeting() {
         transition={{ duration: 0.8 }}
       >
         <span className="badge">AI Pipeline</span>
-        <h1 className="main-title">The Intelligence Behind <br/><span>MeetWise</span></h1>
+        <h1 className="main-title">The Flow Behind <br/><span>MeetWise</span></h1>
         <p className="subtitle">From raw audio to actionable insights in five sophisticated steps.</p>
       </motion.div>
 

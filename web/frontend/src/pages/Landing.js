@@ -39,12 +39,11 @@ export default function Landing() {
           <motion.span className="hero-badge">✦ AI Meeting Assistant</motion.span>
           <motion.h1>MeetWise<span>.</span></motion.h1>
           <motion.p>
-            The intelligence layer for your conversations. Capture every detail 
-            with an AI bot that listens, understands, and acts.
+            AI-Powered Multilingual Meeting Intelligence 
           </motion.p>
           <div className="hero-btns">
             <button className="btn-primary" onClick={() => window.location.href = "/dashboard"}>
-              Start Free Trial
+              Get Started
             </button>
             <button className="btn-secondary">Watch Demo</button>
           </div>
@@ -79,7 +78,7 @@ export default function Landing() {
                 animate={{ opacity: 1, scale: 1, x: 50 }}
                 transition={{ delay: 2, duration: 0.5 }}
               >
-                Summarizing Key Insights... 🚀
+                Summarizing Key Insights...
               </motion.div>
             </motion.div>
 
@@ -141,28 +140,28 @@ export default function Landing() {
 
       {/* BENTO GRID WITH IMPROVED ICONS */}
       <section className="info-section">
-        <div className="section-label">Capabilities</div>
+        <div className="section-label">Feautures</div>
         <h2 className="section-title">Everything you need to scale.</h2>
         <div className="bento-grid">
           <FeatureCard 
-            title="Neural Summaries" 
-            desc="Advanced LLMs condense hours into minutes." 
+            title="Multilingual Understanding" 
+            desc="Automatically transcribe and translate meetings across multiple languages into clear English insights." 
             iconType="neural" 
             size="large" 
           />
           <FeatureCard 
-            title="Smart Tasks" 
-            desc="Extract deadlines automatically." 
+            title="Intelligent Summarization" 
+            desc="Generate concise, meaningful summaries that preserve key decisions and discussions." 
             iconType="task" 
           />
           <FeatureCard 
-            title="Global Reach" 
-            desc="Real-time translation for 50+ languages." 
+            title="Action Item Extraction" 
+            desc="Identify responsibilities, deadlines, and next steps without manual effort." 
             iconType="global" 
           />
           <FeatureCard 
-            title="Secure Cloud" 
-            desc="Private, encrypted processing." 
+            title="Enterprise-Ready Architecture" 
+            desc="Built using FastAPI, React, and modular AI pipelines for scalability." 
             iconType="secure" 
             size="wide" 
           />

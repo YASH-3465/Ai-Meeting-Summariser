@@ -1,0 +1,67 @@
+/* CONTAINER */
+.mw-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  user-select: none;
+}
+
+/* TEXT LABEL */
+.mw-toggle-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* THE TRACK (BACKGROUND) */
+.mw-toggle-track {
+  width: 51px;
+  height: 31px;
+  /* Dark Glass Look when Off */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* BRAND GRADIENT WHEN ACTIVE */
+.mw-toggle-track.is-active {
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  border-color: rgba(0, 210, 255, 0.3);
+  /* Adds a subtle outer glow to match your dashboard theme */
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2), 
+              inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* THE KNOB */
+.mw-toggle-knob {
+  width: 27px;
+  height: 27px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* THE "SQUISH" EFFECT */
+.mw-toggle-track:active .mw-toggle-knob {
+  width: 32px;
+}
+
+/* Branding Hover State */
+.mw-toggle-track:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.mw-toggle-track.is-active:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+}

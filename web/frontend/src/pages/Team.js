@@ -3,27 +3,50 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 
 const members = [
   { 
-    name: "You", 
-    role: "AI & Backend Lead", 
-    bio: "Architected the core neural engine. Specialized in Whisper integration and API orchestration for real-time summarization.",
-    skills: ["Python", "PyTorch", "Node.js", "LLMs"],
-    color: "#00d2ff"
+    name: "Vishwas",
+    role: "Testing & UI Designer",
+    bio: "Handled testing, evaluation, and validation of AI outputs. , model comparison, and Mastermind behind the MeetWise aesthetic. Specialized in creating the glassmorphic interface that defines the user experience.",
+    skills: [
+      "Testing",
+      "AI Evaluation",
+      "Research Documentation",
+      "Model Analysis"
+    ],
+    color: "#3a7bd5",
+    linkedin: "https://www.linkedin.com/in/vishwas-link"
   },
   { 
-    name: "Teammate 1", 
-    role: "Research & Documentation", 
-    bio: "Led the comparative analysis of transcription models. Ensured technical accuracy and high-fidelity documentation for the AI pipeline.",
-    skills: ["Technical Writing", "Data Analysis", "NLP Research"],
-    color: "#9d50bb"
+    name: "Yashwanth",
+    role: "Team Lead, AI Pipeline & Frontend",
+    bio: "Designed and implemented the core AI meeting intelligence pipeline including speech transcription, multilingual translation, summarization, and action-item extraction. Also developed the interactive frontend experience connecting the AI engine with users.",
+    skills: [
+      "Python",
+      "Whisper ASR",
+      "NLP",
+      "FastAPI",
+      "React",
+      "Framer Motion"
+    ],
+    color: "#00d2ff",
+    linkedin: "https://www.linkedin.com/in/yashwanth-goud-543298366/"
   },
-  { 
-    name: "Teammate 2", 
-    role: "UI & Frontend Design", 
-    bio: "Mastermind behind the MeetWise aesthetic. Focused on creating a frictionless, glassmorphic user experience with fluid motion.",
-    skills: ["React", "Framer Motion", "UI/UX", "CSS3"],
-    color: "#3a7bd5"
+   { 
+    name: "Tanushree",
+    role: "Backend & AI Pipeline Engineer",
+    bio: "Responsible for backend architecture and half of the AI pipeline implementation. Built FastAPI services, integrated AI models with backend workflows, and ensured stable data flow between the frontend and AI engine.",
+    skills: [
+      "FastAPI",
+      "Python",
+      "API Design",
+      "AI Integration",
+      "System Architecture"
+    ],
+    color: "#9d50bb",
+    linkedin: "https://www.linkedin.com/in/tanushree-link"
   }
+  
 ];
+
 
 export default function Team() {
   const [selected, setSelected] = useState(null);
@@ -45,7 +68,7 @@ export default function Team() {
       <div className="team-container">
         <header className="team-header">
           <motion.span layout className="team-badge">Meet the Crew</motion.span>
-          <motion.h1 layout>Engineering <span>Excellence</span></motion.h1>
+          <motion.h1 layout>Project <span>Team</span></motion.h1>
         </header>
 
         <motion.div layout className="layout-engine">
@@ -87,12 +110,28 @@ export default function Team() {
 
                   <motion.p 
                     className="bio"
+
                     initial={{ y: 20, opacity: 0 }} 
                     animate={{ y: 0, opacity: 1 }} 
                     transition={{ delay: 0.2 }}
                   >
                     {selected.bio}
                   </motion.p>
+                  <a
+  href={selected.linkedin}
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    display: "inline-block",
+    marginBottom: "30px",
+    color: selected.color,
+    fontWeight: 700,
+    textDecoration: "none"
+  }}
+>
+  View LinkedIn →
+</a>
+
 
                   <div className="skills-row">
                     {selected.skills.map((s, i) => (
