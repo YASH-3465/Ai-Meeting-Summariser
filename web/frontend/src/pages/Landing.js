@@ -3,14 +3,14 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 export default function Landing() {
   const containerRef = useRef(null);
-  
-  // Parallax and Scroll effects
   const { scrollYProgress } = useScroll();
+  
+  // Parallax and Scroll effects from your original code
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -500]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   
-  // Fixed useSpring definition for smooth scaling
+  // High-end smooth scaling for the 3D mockup
   const mockupScale = useSpring(useTransform(scrollYProgress, [0, 0.4], [1, 1.05]), {
     stiffness: 100,
     damping: 30
@@ -27,7 +27,7 @@ export default function Landing() {
         <div className="grid-overlay" />
       </div>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION (Original Branding) */}
       <section className="hero-section">
         <motion.div 
           className="hero-content"
@@ -49,87 +49,95 @@ export default function Landing() {
           </div>
         </motion.div>
 
-        {/* MOCKUP WITH POPPING BOT ANIMATION */}
+        {/* --- HANDSOME BLUE BOT & DETAILED WORKSPACE (New Component) --- */}
         <motion.div 
           className="dashboard-preview"
           style={{ scale: mockupScale }}
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 1 }}
         >
-          <div className="mockup-frame">
-            {/* THE FLOATING BOT */}
+          {/* THE HANDSOME BLUE BOT */}
+          <div className="bot-anchor">
             <motion.div 
-              className="ai-bot-entity"
+              className="handsome-bot"
               animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="bot-head">
-                <div className="bot-eye-left" />
-                <div className="bot-eye-right" />
-                <div className="bot-mouth" />
-              </div>
-              <div className="bot-ring" />
-              
-              {/* BOT CHAT BUBBLE */}
               <motion.div 
-                className="bot-bubble"
-                initial={{ opacity: 0, scale: 0.5, x: 20 }}
-                animate={{ opacity: 1, scale: 1, x: 50 }}
-                transition={{ delay: 2, duration: 0.5 }}
-              >
-                Summarizing Key Insights...
-              </motion.div>
-            </motion.div>
+                className="bot-halo"
+                animate={{ rotate: 360, opacity: [0.2, 0.5, 0.2] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              />
+              
+              <div className="bot-head-blue">
+                <div className="glass-visor">
+                  <div className="visor-glow" />
+                  <div className="handsome-eyes">
+                    <motion.div className="h-eye" animate={{ scaleX: [1, 1.2, 1] }} />
+                    <motion.div className="h-eye" animate={{ scaleX: [1, 1.2, 1] }} />
+                  </div>
+                </div>
+              </div>
 
+              <motion.div className="floating-hand left" animate={{ y: [-5, 5, -5] }} transition={{ duration: 3, repeat: Infinity }}>🤟</motion.div>
+              <motion.div className="floating-hand right" animate={{ y: [5, -5, 5] }} transition={{ duration: 3, repeat: Infinity }}>✨</motion.div>
+
+              <motion.div className="bot-status-bubble">"Ready to Analyze!" </motion.div>
+            </motion.div>
+          </div>
+
+          {/* DETAILED SCREEN MOCKUP */}
+          <div className="mockup-frame">
             <div className="mockup-header">
-              <div className="dots"><span/><span/><span/></div>
-              <div className="mockup-search">meetwise_intelligence_engine.ai</div>
+              <div className="window-controls"><span/><span/><span/></div>
+              <div className="address-bar">meetwise_v4.2.ai</div>
             </div>
             
             <div className="mockup-body">
               <div className="mockup-sidebar">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="side-line" style={{ width: i === 0 ? '100%' : '60%' }} />
-                ))}
+                <div className="side-icon-active" />
+                <div className="side-icon" /><div className="side-icon" />
+                <div className="side-spacer" />
+                <div className="side-profile" />
               </div>
-              
+
               <div className="mockup-main">
-                <div className="meeting-ui">
-                  <div className="meeting-header">
-                    <div className="avatar-group">
-                      <div className="avatar-small blue" />
-                      <div className="avatar-small purple" />
-                      <div className="avatar-small green" />
-                    </div>
-                    <span>Weekly Sync - 12:45 PM</span>
+                <div className="main-top-bar">
+                  <div className="breadcrumb">Workspace / Project MeetWise / <span>Sync.mp4</span></div>
+                  <div className="user-stack">
+                    <div className="u-circle" style={{ background: "#00d2ff" }}>Y</div>
+                    <div className="u-circle" style={{ background: "#9d50bb" }}>T</div>
+                    <div className="u-circle" style={{ background: "#3a7bd5" }}>V</div>
                   </div>
-                  
-                  <div className="transcript-area">
-                    <div className="transcript-row">
-                      <div className="t-avatar" />
-                      <div className="t-skeleton" />
-                    </div>
-                    <div className="transcript-row reverse">
-                      <div className="t-skeleton-short" />
-                      <div className="t-avatar" />
+                </div>
+
+                <div className="workspace-grid">
+                  <div className="feed-panel">
+                    <div className="panel-head">Live Transcription</div>
+                    <div className="feed-scroll">
+                      <div className="feed-row">
+                        <span className="timestamp">12:01</span>
+                        <p><strong>Yashwanth:</strong> Core pipeline is ready for deployment.</p>
+                      </div>
+                      <div className="feed-row active">
+                        <span className="timestamp">12:02</span>
+                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ repeat: Infinity, duration: 2 }}>
+                          <strong>Tanushree:</strong> Finalizing the API bridges...
+                        </motion.p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="ai-insight-panel">
-                    <div className="insight-header">AI SUMMARY</div>
-                    <motion.div 
-                      className="insight-text"
-                      initial={{ width: 0 }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                    />
-                    <motion.div 
-                      className="insight-text"
-                      initial={{ width: 0 }}
-                      animate={{ width: "80%" }}
-                      transition={{ duration: 1.5, delay: 0.5, repeat: Infinity, repeatDelay: 3.5 }}
-                    />
+                  <div className="intel-panel">
+                    <div className="panel-head">AI Intelligence</div>
+                    <div className="summary-skeleton">
+                      <div className="skel-title" />
+                      <div className="skel-line" />
+                      <div className="skel-line" />
+                      <div className="skel-line short" />
+                    </div>
+                    <div className="action-tags">
+                      <div className="tag">Action Item</div>
+                      <div className="tag">Deadline</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -138,154 +146,145 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      {/* BENTO GRID WITH IMPROVED ICONS */}
+      {/* BENTO GRID (With New Animated SVG Icons) */}
       <section className="info-section">
-        <div className="section-label">Feautures</div>
+        <div className="section-label">Features</div>
         <h2 className="section-title">Everything you need to scale.</h2>
         <div className="bento-grid">
-          <FeatureCard 
-            title="Multilingual Understanding" 
-            desc="Automatically transcribe and translate meetings across multiple languages into clear English insights." 
-            iconType="neural" 
-            size="large" 
-          />
-          <FeatureCard 
-            title="Intelligent Summarization" 
-            desc="Generate concise, meaningful summaries that preserve key decisions and discussions." 
-            iconType="task" 
-          />
-          <FeatureCard 
-            title="Action Item Extraction" 
-            desc="Identify responsibilities, deadlines, and next steps without manual effort." 
-            iconType="global" 
-          />
-          <FeatureCard 
-            title="Enterprise-Ready Architecture" 
-            desc="Built using FastAPI, React, and modular AI pipelines for scalability." 
-            iconType="secure" 
-            size="wide" 
-          />
+          <FeatureCard title="Multilingual Intelligence" desc="Automatically transcribe and translate meetings across multiple languages into clear English insights." iconType="neural" size="large" />
+          <FeatureCard title="Action Item Extraction" desc="Identify responsibilities, deadlines, and next steps without manual effort." iconType="task" />
+          <FeatureCard title="Enterprise-Ready Architecture" desc="Built using FastAPI, React, and modular AI pipelines for scalability." iconType="global" />
+          <FeatureCard title="Intelligent Summarization" desc="Generate concise, meaningful summaries that preserve key decisions and discussions." iconType="secure" size="wide" />
         </div>
       </section>
     </div>
   );
 }
 
-// Improved FeatureCard with SVG Icons
+// New FeatureCard with Premium Animated Icons
 function FeatureCard({ title, desc, iconType, size = "" }) {
   const icons = {
     neural: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" strokeOpacity="0.2"/>
-        <path d="M12 6v6l4 2" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="12" cy="12" r="3" fill="url(#grad1)"/>
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00d2ff" />
-            <stop offset="100%" stopColor="#9d50bb" />
-          </linearGradient>
-        </defs>
+      <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
+        <motion.path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#00d2ff" strokeWidth="1.5" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} transition={{ duration: 2 }} />
       </svg>
     ),
     task: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <rect x="3" y="4" width="18" height="18" rx="2" strokeOpacity="0.3"/>
-        <path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/>
-        <path d="M9 16l2 2 4-4" stroke="#00d2ff" strokeLinecap="round" strokeLinejoin="round"/>
+      <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
+        <motion.rect x="3" y="3" width="18" height="18" rx="2" stroke="#9d50bb" strokeWidth="1.5" whileInView={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 3 }} />
+        <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
     global: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
-        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#9d50bb"/>
+      <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
+        <motion.circle cx="12" cy="12" r="10" stroke="#3a7bd5" strokeWidth="1.5" animate={{ rotate: 360 }} transition={{ duration: 5, repeat: Infinity, ease: "linear" }} />
       </svg>
     ),
     secure: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#00d2ff"/>
-        <circle cx="12" cy="12" r="3" strokeOpacity="0.5"/>
+      <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
+        <motion.path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#00ff88" strokeWidth="1.5" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
       </svg>
     )
   };
 
   return (
-    <motion.div className={`feature-card ${size}`} whileHover={{ y: -10 }} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+    <motion.div className={`feature-card ${size}`} whileHover={{ y: -15 }}>
       <div className="feature-icon-wrapper">{icons[iconType]}</div>
       <h3>{title}</h3>
       <p>{desc}</p>
+      <div className="card-shine" />
       <div className="feature-glow" />
     </motion.div>
   );
 }
 
 const landingCSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-  .landing-root { background-color: #030303; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap');
+
+  .landing-root { background: #020202; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
   .aura-container { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  .aura-blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(120px); opacity: 0.12; }
+  .aura-blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.15; }
   .blue { background: #00d2ff; top: -100px; left: -100px; }
   .purple { background: #9d50bb; bottom: -100px; right: -100px; }
-  .grid-overlay { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 40px 40px; }
+  .grid-overlay { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 30px 30px; }
   
-  .hero-section { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 150px 20px 0; text-align: center; }
-  .hero-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 100px; font-size: 0.8rem; color: #00d2ff; }
-  .hero-content h1 { font-size: clamp(3.5rem, 10vw, 7rem); font-weight: 800; margin: 20px 0; line-height: 1; background: linear-gradient(to bottom, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hero-content h1 span { color: #00d2ff; -webkit-text-fill-color: initial; }
-  .hero-content p { max-width: 600px; margin: 0 auto 40px; color: #888; font-size: 1.2rem; }
-  .hero-btns { display: flex; gap: 20px; justify-content: center; }
-  .btn-primary { background: #fff; color: #000; border: none; padding: 16px 36px; border-radius: 14px; font-weight: 700; cursor: pointer; }
-  .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 16px 36px; border-radius: 14px; }
+  .hero-section { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 180px 20px 0; text-align: center; }
+  .hero-badge { background: rgba(0,210,255,0.1); border: 1px solid rgba(0,210,255,0.2); padding: 8px 18px; border-radius: 100px; color: #00d2ff; font-size: 0.8rem; font-weight: 700; }
+  .hero-content h1 { font-size: clamp(3.5rem, 8vw, 6rem); font-weight: 800; line-height: 1; margin: 25px 0; letter-spacing: -2px; }
+  .hero-content h1 span { color: #00d2ff; }
+  .hero-content p { color: #888; max-width: 550px; font-size: 1.1rem; margin-bottom: 40px; }
+  
+  .btn-primary { background: #fff; color: #000; padding: 16px 36px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; }
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(255,255,255,0.3); transform: translateY(-3px); }
+  .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 16px 36px; border-radius: 14px; color: #fff; cursor: pointer; }
 
-  /* BOT ANIMATION */
-  .ai-bot-entity { position: absolute; top: 15%; right: 10%; width: 60px; height: 60px; z-index: 100; }
-  .bot-head { width: 100%; height: 100%; background: #00d2ff; border-radius: 20px; position: relative; box-shadow: 0 0 30px #00d2ff; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .bot-eye-left, .bot-eye-right { width: 8px; height: 8px; background: #000; border-radius: 50%; animation: blink 4s infinite; }
-  @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-  .bot-ring { position: absolute; top: 50%; left: 50%; width: 120%; height: 120%; border: 2px solid #00d2ff; border-radius: 50%; transform: translate(-50%, -50%); animation: rotateRing 10s linear infinite; opacity: 0.3; }
-  @keyframes rotateRing { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-  .bot-bubble { position: absolute; background: #fff; color: #000; padding: 12px 20px; border-radius: 15px 15px 15px 0; width: 200px; font-weight: 700; font-size: 0.8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  /* HANDSOME BLUE BOT STYLES */
+  .bot-anchor { position: absolute; top: 12%; right: 8%; z-index: 1000; }
+  .handsome-bot { position: relative; width: 90px; height: 110px; display: flex; flex-direction: column; align-items: center; }
+  .bot-halo { position: absolute; top: -10px; width: 110px; height: 40px; border: 2px solid #00d2ff; border-radius: 50%; box-shadow: 0 0 15px #00d2ff; }
+  .bot-head-blue { width: 80px; height: 75px; background: linear-gradient(135deg, #007aff, #00d2ff); border-radius: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 35px rgba(0,122,255,0.4); border: 2px solid rgba(255,255,255,0.1); }
+  .glass-visor { width: 80%; height: 50%; background: rgba(0,0,0,0.6); border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-around; }
+  .visor-glow { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: sweep 3s infinite; }
+  @keyframes sweep { 100% { left: 200%; } }
+  .handsome-eyes { display: flex; gap: 10px; }
+  .h-eye { width: 8px; height: 4px; background: #00ffcc; border-radius: 10px; box-shadow: 0 0 8px #00ffcc; }
+  .floating-hand { position: absolute; font-size: 1.2rem; top: 60px; }
+  .floating-hand.left { left: -30px; }
+  .floating-hand.right { right: -30px; }
+  .bot-status-bubble { position: absolute; top: -60px; left: 70px; background: #fff; color: #000; padding: 10px 15px; border-radius: 18px 18px 18px 0; font-weight: 800; font-size: 0.7rem; white-space: nowrap; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
-  /* MOCKUP UI */
-  .dashboard-preview { margin-top: 80px; width: 100%; max-width: 1000px; perspective: 2000px; }
-  .mockup-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 24px 24px 0 0; overflow: visible; box-shadow: 0 50px 100px rgba(0,0,0,0.8); transform: rotateX(20deg) rotateY(-5deg); position: relative; }
-  .mockup-header { background: #111; padding: 15px 25px; display: flex; align-items: center; gap: 30px; border-bottom: 1px solid #222; }
-  .mockup-body { height: 450px; display: flex; }
-  .mockup-sidebar { width: 80px; background: #0d0d0d; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-  .side-line { height: 6px; background: #1a1a1a; border-radius: 4px; }
-  .mockup-main { flex: 1; padding: 40px; }
+  /* MOCKUP UI STYLES */
+  .dashboard-preview { margin-top: 100px; width: 100%; max-width: 1050px; perspective: 2000px; position: relative; }
+  .mockup-frame { background: #080808; border: 1px solid #1a1a1a; border-radius: 24px 24px 0 0; box-shadow: 0 50px 100px rgba(0,0,0,0.9); transform: rotateX(10deg); overflow: hidden; text-align: left; }
+  .mockup-header { background: #111; padding: 12px 25px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #1a1a1a; }
+  .window-controls { display: flex; gap: 8px; }
+  .window-controls span { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+  .address-bar { background: #050505; border: 1px solid #1a1a1a; border-radius: 8px; padding: 4px 15px; color: #444; font-size: 0.7rem; flex: 1; font-family: 'JetBrains Mono'; }
+  .mockup-body { display: flex; height: 500px; }
+  .mockup-sidebar { width: 60px; background: #0a0a0a; border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; }
+  .side-icon-active { width: 24px; height: 24px; background: #00d2ff; border-radius: 6px; box-shadow: 0 0 10px #00d2ff; }
+  .side-icon { width: 24px; height: 24px; background: #1a1a1a; border-radius: 6px; }
+  .side-spacer { flex: 1; }
+  .side-profile { width: 28px; height: 28px; background: #333; border-radius: 50%; }
+  .mockup-main { flex: 1; padding: 30px; display: flex; flex-direction: column; gap: 25px; }
+  .main-top-bar { display: flex; justify-content: space-between; align-items: center; }
+  .breadcrumb { font-size: 0.75rem; color: #444; }
+  .user-stack { display: flex; }
+  .u-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #080808; margin-left: -8px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; }
+  .workspace-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; flex: 1; }
+  .panel-head { font-size: 0.65rem; color: #555; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 15px; }
+  .feed-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; }
+  .feed-row { font-size: 0.8rem; margin-bottom: 15px; display: flex; gap: 15px; color: #666; }
+  .feed-row.active { color: #fff; background: rgba(0,210,255,0.05); padding: 10px; border-radius: 10px; }
+  .timestamp { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #333; }
+  .intel-panel { background: rgba(0,210,255,0.03); border: 1px solid rgba(0,210,255,0.1); border-radius: 20px; padding: 20px; }
+  .skel-title { height: 12px; background: #1a1a1a; border-radius: 4px; width: 60%; margin-bottom: 15px; }
+  .skel-line { height: 8px; background: #111; border-radius: 4px; width: 100%; margin-bottom: 8px; }
+  .skel-line.short { width: 40%; }
+  .action-tags { display: flex; gap: 10px; margin-top: 20px; }
+  .tag { background: rgba(0,210,255,0.1); color: #00d2ff; padding: 4px 10px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; }
 
-  /* INTERNAL UI */
-  .meeting-ui { height: 100%; background: #000; border-radius: 20px; border: 1px solid #1a1a1a; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
-  .meeting-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #555; }
-  .avatar-group { display: flex; }
-  .avatar-small { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #000; }
-  .avatar-small.blue { background: #00d2ff; }
-  .avatar-small.purple { background: #9d50bb; }
-  .avatar-small.green { background: #00ff88; }
-  .transcript-area { flex: 1; display: flex; flex-direction: column; gap: 15px; }
-  .transcript-row { display: flex; align-items: center; gap: 12px; }
-  .transcript-row.reverse { justify-content: flex-end; }
-  .t-avatar { width: 30px; height: 30px; background: #1a1a1a; border-radius: 8px; }
-  .t-skeleton { height: 12px; background: #1a1a1a; border-radius: 6px; width: 60%; }
-  .t-skeleton-short { height: 12px; background: #1a1a1a; border-radius: 6px; width: 40%; }
-  .ai-insight-panel { background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.1); padding: 20px; border-radius: 15px; }
-  .insight-header { font-size: 0.7rem; font-weight: 800; color: #00d2ff; margin-bottom: 10px; }
-  .insight-text { height: 8px; background: #00d2ff; border-radius: 4px; margin-bottom: 8px; opacity: 0.3; }
-
-  /* BENTO FEATURES */
-  .info-section { padding: 150px 5%; max-width: 1200px; margin: 0 auto; }
-  .section-label { color: #00d2ff; text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; margin-bottom: 20px; }
-  .section-title { font-size: 3rem; font-weight: 800; margin-bottom: 60px; }
-  .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 250px; gap: 24px; }
-  .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 40px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; backdrop-filter: blur(10px); }
+  /* BENTO FEATURE CARD STYLES */
+  .info-section { padding: 150px 5%; max-width: 1200px; margin: 0 auto; text-align: left; }
+  .section-label { color: #00d2ff; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 20px; }
+  .section-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 60px; }
+  .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 280px; gap: 24px; }
+  .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 35px; padding: 40px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; backdrop-filter: blur(10px); }
   .large { grid-row: span 2; }
   .wide { grid-column: span 2; }
-  
-  .feature-icon-wrapper { width: 50px; height: 50px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.03); padding: 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+  .feature-icon-wrapper { width: 60px; height: 60px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
   .feature-card:hover .feature-icon-wrapper { border-color: #00d2ff; box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); transform: rotate(-5deg); }
-  .feature-icon-wrapper svg { width: 100%; height: 100%; }
+  .animated-svg { width: 35px; height: 35px; }
   .feature-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
-  .feature-card p { color: #666; line-height: 1.5; }
-  .feature-glow { position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(0,210,255,0.05), transparent); opacity: 0; transition: 0.5s; }
+  .feature-card p { color: #666; line-height: 1.5; font-size: 0.95rem; }
+  .feature-glow { position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(0,210,255,0.1), transparent); opacity: 0; transition: 0.5s; pointer-events: none; }
   .feature-card:hover .feature-glow { opacity: 1; }
+  .card-shine { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; pointer-events: none; }
+  .feature-card:hover .card-shine { left: 100%; }
+
+  @media (max-width: 900px) {
+    .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+    .wide, .large { grid-column: span 1; grid-row: span 1; }
+    .hero-content h1 { font-size: 3rem; }
+  }
 `;

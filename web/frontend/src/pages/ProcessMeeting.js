@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { useNavigate } from "react-router-dom"; // Added for navigation
 
 const steps = [
   {
@@ -36,6 +37,8 @@ const steps = [
 
 export default function ProcessMeeting() {
   const containerRef = useRef(null);
+  const navigate = useNavigate(); // Initialize navigation hook
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start center", "end center"],
@@ -89,7 +92,10 @@ export default function ProcessMeeting() {
       >
         <div className="ready-card">
           <h2>Ready to transform your meetings?</h2>
-          <button className="cta-btn">Launch Dashboard</button>
+          {/* Added onClick handler to the button */}
+          <button className="cta-btn" onClick={() => navigate("/dashboard")}>
+            Launch Dashboard
+          </button>
         </div>
       </motion.div>
     </div>
@@ -107,29 +113,28 @@ function ProcessStep({ step, index }) {
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.7, type: "spring", bounce: 0.3 }}
     >
-      {/* THE CARD */}
-      <motion.div 
-        className="glass-card"
-        whileHover={{ y: -10, scale: 1.02 }}
-      >
-        <div className="icon-box" style={{ background: step.color }}>
-          {step.icon}
-        </div>
-        <div className="content">
-          <span className="step-count">Step 0{index + 1}</span>
-          <h3>{step.title}</h3>
-          <p>{step.desc}</p>
-        </div>
-        <div className="card-overlay" style={{ background: `radial-gradient(circle at top right, ${step.color}22, transparent)` }} />
-      </motion.div>
+      <div className="card-relative-container">
+        <motion.div 
+          className="glass-card"
+          whileHover={{ y: -10, scale: 1.02 }}
+        >
+          <div className="icon-box" style={{ background: step.color }}>
+            {step.icon}
+          </div>
+          <div className="content">
+            <span className="step-count">Step 0{index + 1}</span>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+          <div className="card-overlay" style={{ background: `radial-gradient(circle at top right, ${step.color}22, transparent)` }} />
+        </motion.div>
 
-      {/* DOT ON THE LINE */}
-      <div className="line-dot" />
+        <div className="line-dot" />
+      </div>
     </motion.div>
   );
 }
 
-// STYLES 
 const s = {
   page: {
     backgroundColor: "#030303",
@@ -205,6 +210,7 @@ const customCSS = `
     transform: translateX(-50%);
     height: 100%;
     width: 4px;
+    z-index: 5;
   }
 
   .line-bg {
@@ -234,11 +240,20 @@ const customCSS = `
     position: relative;
   }
 
-  .step-wrapper.left { justify-content: flex-start; padding-right: 50%; }
-  .step-wrapper.right { justify-content: flex-end; padding-left: 50%; }
+  .card-relative-container {
+    position: relative;
+    width: 50%;
+    display: flex;
+  }
+
+  .step-wrapper.left { justify-content: flex-start; }
+  .step-wrapper.right { justify-content: flex-end; }
+
+  .step-wrapper.left .card-relative-container { justify-content: flex-start; padding-right: 40px; }
+  .step-wrapper.right .card-relative-container { justify-content: flex-end; padding-left: 40px; }
 
   .glass-card {
-    width: 90%;
+    width: 100%;
     background: rgba(255,255,255,0.02);
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255,255,255,0.08);
@@ -281,15 +296,23 @@ const customCSS = `
 
   .line-dot {
     position: absolute;
-    left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
     width: 16px; height: 16px;
     background: #00d2ff;
     border: 4px solid #030303;
     border-radius: 50%;
     z-index: 10;
     box-shadow: 0 0 15px #00d2ff;
+  }
+
+  .step-wrapper.left .line-dot {
+    right: -8px; 
+    transform: translateY(-50%);
+  }
+
+  .step-wrapper.right .line-dot {
+    left: -8px;
+    transform: translateY(-50%);
   }
 
   .footer-cta {
@@ -325,13 +348,16 @@ const customCSS = `
   }
 
   @media (max-width: 850px) {
-    .step-wrapper.left, .step-wrapper.right {
-      padding: 0 0 0 60px;
-      justify-content: flex-start;
+    .card-relative-container { width: 100%; }
+    .step-wrapper.left .card-relative-container, 
+    .step-wrapper.right .card-relative-container { 
+      padding: 0 0 0 60px; 
     }
-    .line-container, .line-dot {
-      left: 20px;
-      transform: none;
+    .line-container { left: 20px; transform: none; }
+    .step-wrapper.left .line-dot, 
+    .step-wrapper.right .line-dot {
+      left: 14px;
+      right: auto;
     }
     .main-title { font-size: 2.5rem; }
     .glass-card { padding: 25px; flex-direction: column; }

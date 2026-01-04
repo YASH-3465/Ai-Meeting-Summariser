@@ -2,23 +2,30 @@ import React, { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const members = [
-  { 
-    name: "Vishwas",
-    role: "Testing & UI Designer",
-    bio: "Handled testing, evaluation, and validation of AI outputs. , model comparison, and Mastermind behind the MeetWise aesthetic. Specialized in creating the glassmorphic interface that defines the user experience.",
+   { 
+    name: "Tanushree",
+    role: "Backend & AI Pipeline Engineer",
+    badge: "Neural Logic Lead",
+    badgeColor: "#DE1A58",
+
+    bio: "Responsible for backend architecture and half of the AI pipeline implementation. Built FastAPI services, integrated AI models with backend workflows, and ensured stable data flow between the frontend and AI engine.",
     skills: [
-      "Testing",
-      "AI Evaluation",
-      "Research Documentation",
-      "Model Analysis"
+      "FastAPI",
+      "Python",
+      "API Design",
+      "AI Integration",
+      "System Architecture"
     ],
-    color: "#3a7bd5",
-    linkedin: "https://www.linkedin.com/in/vishwas-link"
+    color: "#9d50bb",
+    linkedin: "https://www.linkedin.com/in/tanushree-link"
   },
   { 
     name: "Yashwanth",
     role: "Team Lead, AI Pipeline & Frontend",
     bio: "Designed and implemented the core AI meeting intelligence pipeline including speech transcription, multilingual translation, summarization, and action-item extraction. Also developed the interactive frontend experience connecting the AI engine with users.",
+    isLead: true, 
+    badge:"TEAM LEAD",
+    
     skills: [
       "Python",
       "Whisper ASR",
@@ -30,20 +37,23 @@ const members = [
     color: "#00d2ff",
     linkedin: "https://www.linkedin.com/in/yashwanth-goud-543298366/"
   },
-   { 
-    name: "Tanushree",
-    role: "Backend & AI Pipeline Engineer",
-    bio: "Responsible for backend architecture and half of the AI pipeline implementation. Built FastAPI services, integrated AI models with backend workflows, and ensured stable data flow between the frontend and AI engine.",
+  { 
+    name: "Vishwas",
+    role: "Testing & UI Designer",
+    badge: "Interaction Design Lead",
+    badgeColor: "#f5c542",
+
+    bio: "Handled testing, evaluation, and validation of AI outputs. , model comparison, and Mastermind behind the MeetWise aesthetic. Specialized in creating the glassmorphic interface that defines the user experience.",
     skills: [
-      "FastAPI",
-      "Python",
-      "API Design",
-      "AI Integration",
-      "System Architecture"
+      "Testing",
+      "AI Evaluation",
+      "Research Documentation",
+      "Model Analysis"
     ],
-    color: "#9d50bb",
-    linkedin: "https://www.linkedin.com/in/tanushree-link"
+    color: "#3a7bd5",
+    linkedin: "https://www.linkedin.com/in/vishwas-link"
   }
+  
   
 ];
 
@@ -181,6 +191,15 @@ function TeamCard({ member, isSelected, onClick }) {
       style={{ rotateX: isSelected ? 0 : rotateX, rotateY: isSelected ? 0 : rotateY, perspective: 1000 }}
     >
       <motion.div className="card-glass">
+        {member.badge && (
+  <div 
+    className="role-badge" 
+    style={{ background: member.badgeColor || member.color }}
+  >
+    {member.badge}
+  </div>
+)}
+
         <div className="avatar" style={{ boxShadow: `0 0 20px ${member.color}44` }}>
           {member.name.charAt(0)}
           <div className="avatar-glow" style={{ background: member.color }} />
@@ -240,6 +259,35 @@ const teamCSS = `
     backdrop-filter: blur(20px);
     transition: border 0.4s ease;
   }
+    .lead-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 6px 14px;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  border-radius: 100px;
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  color: #000;
+  text-transform: uppercase;
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+}
+
+.role-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 6px 14px;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  border-radius: 100px;
+  text-transform: uppercase;
+  color: #000;
+  box-shadow: 0 0 18px rgba(0,0,0,0.3);
+}
+
 
   .card-wrapper.active .card-glass { border-color: #00d2ff; background: rgba(0, 210, 255, 0.05); }
 
