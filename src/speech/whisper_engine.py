@@ -1,24 +1,45 @@
-import whisper
+from faster_whisper import WhisperModel
+
 
 class WhisperEngine:
     def __init__(self):
-        # Load Whisper model (small is fine for your project)
-        self.model = whisper.load_model("small")
+        """
+        Faster-Whisper initialization
+        Optimized for CPU using INT8 quantization
+        """
+        print("🔥 Loading faster-whisper (small, INT8, CPU) 🔥")
+
+        self.model = WhisperModel(
+            "small",
+            device="cpu",
+            compute_type="int8"
+        )
 
     def transcribe(self, audio_path, translate=False):
         """
-        translate=False → English audio → English text
-        translate=True  → Any language audio → English text
+        Single-pass transcription.
+
+        translate=False:
+            → Output in original language
+
+        translate=True:
+            → Output translated to English
+
+        Returns ONLY text (safe for pipeline)
         """
 
-        if translate:
-            # 🔑 TRANSLATION MODE (German / Telugu / Hindi → English)
-            result = self.model.transcribe(
-                audio_path,
-                task="translate"
-            )
-        else:
-            # 🔑 NORMAL TRANSCRIPTION MODE (English → English)
-            result = self.model.transcribe(audio_path)
+        print("🔥 FAST WHISPER TRANSCRIPTION STARTED 🔥")
 
-        return result["text"]
+        segments, info = self.model.transcribe(
+            audio_path,
+            task="translate" if translate else "transcribe",
+            beam_size=5
+        )
+
+        text = " ".join(segment.text for segment in segments)
+
+        print(
+            f"🔥 TRANSCRIPTION DONE | Language={info.language} | Duration={info.duration:.2f}s 🔥"
+        )
+
+        return text

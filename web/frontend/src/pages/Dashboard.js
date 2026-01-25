@@ -137,21 +137,16 @@ setStage("results");
         isSelectingFile={isSelectingFile} // <--- ADD THIS PROP
       />
         {/* HEADER SECTION */}
-        <header className="dash-header">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <h1>Upload Your<span> Meeting</span></h1>
-            <p>Supported formats: MP3, WAV, MP4
-</p>
-          </motion.div>
-          
-          <div className="engine-status">
-            <span className="status-dot" />
-            AI Core: v4.2 Active
-          </div>
-        </header>
+        <section className="mw-pipeline-header">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <span className="mw-badge">Dashboard</span>
+                  <h1 className="mw-h1">Upload<br/><span>The Meeting</span></h1>
+                </motion.div>
+              </section>
 
         {/* MAIN INTERACTIVE AREA */}
         <div className="main-grid">
@@ -351,6 +346,11 @@ const dashStyles = `
     width: 100px; 
     height: 120px;
   }
+
+  .mw-pipeline-header { position: relative; z-index: 10; padding: 18px 24px 100px; text-align: center; }
+  .mw-badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 8px 20px; border-radius: 100px; color: #00d2ff; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .mw-h1 { font-size: clamp(4rem, 8vw, 4.8rem); font-weight: 800; margin-top: 30px; line-height: 0.95; letter-spacing: -3px; }
+  .mw-h1 span { background: linear-gradient(135deg, #fff 30%, #00d2ff 100%);margin-bottom: 30px; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
   /* THOUGHT BUBBLE - MOVED UP */
   .cute-bubble {

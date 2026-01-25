@@ -1,168 +1,1101 @@
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 
-export default function Landing() {
+export default function MeetWiseUltimate() {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll();
   
-  // Parallax and Scroll effects from your original code
+  // Parallax and Scroll effects
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -500]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   
-  // High-end smooth scaling for the 3D mockup
-  const mockupScale = useSpring(useTransform(scrollYProgress, [0, 0.4], [1, 1.05]), {
+  // Dynamic Blur effect for Drifters based on scroll
+  const drifterBlur = useTransform(scrollYProgress, [0.2, 0.5], ["blur(0px)", "blur(12px)"]);
+  const drifterOpacity = useTransform(scrollYProgress, [0.2, 0.5], [0.35, 0.05]);
+
+  const componentScale = useSpring(useTransform(scrollYProgress, [0, 0.4], [0.9, 1]), {
     stiffness: 100,
     damping: 30
   });
 
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleMouseMove = (e) => {
+    if (!containerRef.current || isMobile) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
   return (
-    <div className="landing-root" ref={containerRef}>
-      <style>{landingCSS}</style>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap');
 
-      {/* AMBIENT BACKGROUND */}
-      <div className="aura-container">
-        <motion.div style={{ y: y1 }} className="aura-blob blue" />
-        <motion.div style={{ y: y2 }} className="aura-blob purple" />
-        <div className="grid-overlay" />
-      </div>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          -webkit-tap-highlight-color: transparent;
+        }
 
-      {/* HERO SECTION (Original Branding) */}
-      <section className="hero-section">
-        <motion.div 
-          className="hero-content"
-          style={{ opacity: heroOpacity }}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <motion.span className="hero-badge">✦ AI Meeting Assistant</motion.span>
-          <motion.h1>MeetWise<span>.</span></motion.h1>
-          <motion.p>
-            AI-Powered Multilingual Meeting Intelligence 
-          </motion.p>
-          <div className="hero-btns">
-            <button className="btn-primary" onClick={() => window.location.href = "/dashboard"}>
-              Get Started
-            </button>
-            <button className="btn-secondary">Watch Demo</button>
-          </div>
-        </motion.div>
+        body {
+          overflow-x: hidden;
+          background: #020202;
+        }
 
-        {/* --- HANDSOME BLUE BOT & DETAILED WORKSPACE (New Component) --- */}
-        <motion.div 
-          className="dashboard-preview"
-          style={{ scale: mockupScale }}
-        >
-          {/* THE HANDSOME BLUE BOT */}
-          <div className="bot-anchor">
-            <motion.div 
-              className="handsome-bot"
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <motion.div 
-                className="bot-halo"
-                animate={{ rotate: 360, opacity: [0.2, 0.5, 0.2] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              />
-              
-              <div className="bot-head-blue">
-                <div className="glass-visor">
-                  <div className="visor-glow" />
-                  <div className="handsome-eyes">
-                    <motion.div className="h-eye" animate={{ scaleX: [1, 1.2, 1] }} />
-                    <motion.div className="h-eye" animate={{ scaleX: [1, 1.2, 1] }} />
-                  </div>
-                </div>
-              </div>
+        .landing-root { 
+          background: #020202; 
+          color: #fff; 
+          font-family: 'Plus Jakarta Sans', sans-serif; 
+          overflow-x: hidden; 
+          min-height: 100vh;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
+        html { 
+          scroll-behavior: smooth; 
+        }
+        
+        /* Optimize rendering for animations */
+        .aura-container, .mw-drifter, .feature-card, .pipeline-track, .pipeline-zone-box {
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          perspective: 1000px;
+          will-change: transform, opacity, filter;
+        }
+        
+        .aura-container { 
+          position: fixed; 
+          inset: 0; 
+          z-index: 0; 
+          pointer-events: none; 
+          overflow: hidden; 
+        }
+        
+        .aura-blob { 
+          position: absolute; 
+          width: 600px; 
+          height: 600px; 
+          border-radius: 50%; 
+          filter: blur(150px); 
+          opacity: 0.15; 
+          will-change: transform;
+        }
+        
+        .blue { background: #00d2ff; top: -100px; left: -100px; }
+        .purple { background: #9d50bb; bottom: -100px; right: -100px; }
+        
+        .grid-overlay { 
+          position: absolute; 
+          inset: 0; 
+          background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); 
+          background-size: 30px 30px; 
+        }
+        
+        .noise-overlay { 
+          position: absolute; 
+          inset: 0; 
+          background: url('https://grainy-gradients.vercel.app/noise.svg'); 
+          opacity: 0.03; 
+          mix-blend-mode: overlay; 
+        }
 
-              <motion.div className="floating-hand left" animate={{ y: [-5, 5, -5] }} transition={{ duration: 3, repeat: Infinity }}>🤟</motion.div>
-              <motion.div className="floating-hand right" animate={{ y: [5, -5, 5] }} transition={{ duration: 3, repeat: Infinity }}>✨</motion.div>
+        .mw-drifter { 
+          position: fixed; 
+          z-index: 1; 
+          padding: 10px 20px; 
+          border-radius: 12px; 
+          border: 1px solid rgba(255, 255, 255, 0.12); 
+          background: rgba(255, 255, 255, 0.05); 
+          color: rgba(255, 255, 255, 0.35); 
+          font-weight: 800; 
+          font-size: 0.75rem; 
+          text-transform: uppercase; 
+          letter-spacing: 2px; 
+          backdrop-filter: blur(4px); 
+          pointer-events: none;
+          will-change: transform, opacity, filter;
+        }
+        
+        .d1 { top: 15%; right: 10%; animation: float 8s ease-in-out infinite alternate; }
+        .d2 { bottom: 25%; left: 10%; animation: float 10s ease-in-out infinite alternate-reverse; }
+        .d3 { top: 45%; left: 5%; animation: float 12s ease-in-out infinite alternate; }
+        
+        @keyframes float { 
+          0% { transform: translateY(0) translateZ(0); } 
+          100% { transform: translateY(20px) translateZ(0); } 
+        }
 
-              <motion.div className="bot-status-bubble">"Ready to Analyze!" </motion.div>
-            </motion.div>
-          </div>
+        /* HERO SECTION - FIXED SPACING */
+        .hero-section { 
+          position: relative; 
+          z-index: 10; 
+          display: flex; 
+          flex-direction: column; 
+          align-items: center; 
+          justify-content: center; 
+          padding: 120px 20px 40px; 
+          text-align: center;
+          min-height: 100vh;
+          margin-bottom: 0; /* Remove margin to create proper spacing */
+        }
+        
+        @media (max-width: 768px) {
+          .hero-section {
+            padding: 100px 16px 40px;
+            min-height: 100vh; /* Keep full height on mobile */
+          }
+        }
+        
+        .hero-badge { 
+          background: rgba(0,210,255,0.1); 
+          border: 1px solid rgba(0,210,255,0.2); 
+          padding: 8px 18px; 
+          border-radius: 100px; 
+          color: #00d2ff; 
+          font-size: 0.8rem; 
+          font-weight: 700; 
+          display: inline-block;
+          margin-bottom: 30px; /* Added spacing */
+        }
+        
+        .hero-h1 { 
+          font-size: clamp(4rem, 10vw, 6rem); 
+          font-weight: 800; 
+          line-height: 1.1; 
+          margin: 4px 0; /* Adjusted spacing */
+          letter-spacing: -1.5px; 
+          will-change: transform;
+        }
+        
+        .hero-h1 span { 
+          color: #00d2ff; 
+          text-shadow: 0 0 20px rgba(0,210,255,0.5); 
+        }
+        
+        .hero-content p { 
+          color: #aaa; 
+          max-width: 550px; 
+          font-size: 1.1rem; 
+          margin-bottom: 40px; 
+          line-height: 1.6;
+          margin-top: 20px; /* Added spacing */
+        }
+        
+        .hero-btns { 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          gap: 20px;
+          flex-wrap: wrap;
+          margin-top: 40px; /* Increased spacing */
+        }
+        
+        .btn-primary, .btn-secondary {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: translateZ(0);
+          will-change: transform, box-shadow;
+          min-width: 160px;
+          font-size: 0.95rem;
+        }
+        
+        .btn-primary { 
+          background: #fff; 
+          color: #000; 
+          padding: 14px 32px; 
+          border-radius: 12px; 
+          font-weight: 700; 
+          border: none; 
+          cursor: pointer; 
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(0, 210, 255, 0.2);
+        }
+        
+        .btn-primary:hover { 
+          transform: translateY(-3px);
+          box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary { 
+          background: rgba(255,255,255,0.05); 
+          border: 1px solid rgba(255,255,255,0.15); 
+          padding: 14px 32px; 
+          border-radius: 12px; 
+          color: #fff; 
+          cursor: pointer; 
+          font-weight: 600;
+        }
+        
+        .btn-secondary:hover {
+          background: rgba(255,255,255,0.1);
+          border-color: rgba(255,255,255,0.25);
+          transform: translateY(-3px);
+        }
 
-          {/* DETAILED SCREEN MOCKUP */}
-          <div className="mockup-frame">
-            <div className="mockup-header">
-              <div className="window-controls"><span/><span/><span/></div>
-              <div className="address-bar">meetwise_v4.2.ai</div>
-            </div>
-            
-            <div className="mockup-body">
-              <div className="mockup-sidebar">
-                <div className="side-icon-active" />
-                <div className="side-icon" /><div className="side-icon" />
-                <div className="side-spacer" />
-                <div className="side-profile" />
-              </div>
+        /* PIPELINE SECTION - Added spacing to separate from hero */
+        .pipeline-section {
+          position: relative;
+          padding-top: 100px; /* Added spacing between hero and workflow */
+          margin-top: 100px; /* Additional spacing */
+        }
+        
+        .pipeline-title-section { 
+          position: relative; 
+          z-index: 10; 
+          padding: 80px 20px 30px; /* Increased top padding */
+          margin: 0 auto; 
+          text-align: center; 
+          max-width: 1200px;
+        }
+        
+        .pipeline-subtitle { 
+          color: #aaa; 
+          font-size: 1rem; 
+          max-width: 600px; 
+          margin: 15px auto 0; 
+          line-height: 1.6;
+        }
 
-              <div className="mockup-main">
-                <div className="main-top-bar">
-                  <div className="breadcrumb">Workspace / Project MeetWise / <span>Sync.mp4</span></div>
-                  <div className="user-stack">
-                    <div className="u-circle" style={{ background: "#00d2ff" }}>Y</div>
-                    <div className="u-circle" style={{ background: "#9d50bb" }}>T</div>
-                    <div className="u-circle" style={{ background: "#3a7bd5" }}>V</div>
-                  </div>
-                </div>
+        /* PIPELINE COMPONENT */
+        .pipeline-visual-container { 
+          width: 100%; 
+          max-width: 1200px; 
+          margin: 40px auto 60px; 
+          padding: 20px; 
+          z-index: 10; 
+          position: relative; 
+        }
+        
+        .pipeline-track { 
+          position: relative; 
+          min-height: 400px;
+          background: rgba(255,255,255,0.02); 
+          border: 1px solid rgba(255, 255, 255, 0.05); 
+          border-radius: 30px; 
+          display: flex; 
+          align-items: center; 
+          justify-content: space-around; 
+          padding: 40px 20px;
+          backdrop-filter: blur(20px); 
+          overflow: visible;
+          will-change: transform;
+          transition: transform 0.3s ease-out;
+          gap: 40px;
+        }
+        
+        .track-spotlight { 
+          position: absolute; 
+          inset: 0; 
+          pointer-events: none; 
+          background: radial-gradient(600px circle at var(--x) var(--y), rgba(0,210,255,0.07), transparent 40%); 
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .pipeline-track:hover .track-spotlight {
+          opacity: 1;
+        }
+        
+        .pipeline-zone-box { 
+          width: 100%;
+          max-width: 300px; 
+          min-height: 280px;
+          background: rgba(255,255,255,0.02); 
+          border: 1px solid rgba(255,255,255,0.05); 
+          border-radius: 24px; 
+          padding: 25px; 
+          display: flex; 
+          flex-direction: column; 
+          z-index: 1;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: transform, box-shadow;
+        }
+        
+        .pipeline-zone-box:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 40px rgba(0, 210, 255, 0.15);
+          border-color: rgba(0, 210, 255, 0.3);
+        }
+        
+        .zone-header { 
+          font-size: 0.7rem; 
+          font-weight: 800; 
+          color: #888; 
+          text-transform: uppercase; 
+          letter-spacing: 2px; 
+          margin-bottom: 30px; 
+        }
+        
+        .zone-inner {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+        
+        .multilingual-glitch-box { 
+          display: flex; 
+          gap: 20px; 
+          font-size: 1.1rem; 
+          font-weight: 700; 
+          color: #666; 
+          justify-content: center; 
+          flex-wrap: wrap;
+          margin-bottom: 20px;
+        }
+        
+        .mini-wave-container { 
+          display: flex; 
+          gap: 4px; 
+          align-items: center; 
+          justify-content: center; 
+          margin-top: auto;
+          height: 40px;
+        }
+        
+        .wave-bar { 
+          width: 4px; 
+          background: #00d2ff; 
+          border-radius: 10px; 
+          will-change: height;
+        }
+        
+        /* CORE ANIMATIONS - FIXED: REMOVED PULSE RING & BETTER ALIGNMENT */
+        .pipeline-core-container { 
+          position: relative; 
+          display: flex; 
+          flex-direction: column; 
+          align-items: center; 
+          justify-content: center;
+          gap: 15px; 
+          z-index: 1;
+          padding: 0 20px;
+        }
+        
+        /* Removed core-pulse-ring class completely */
+        
+        .core-outer-ring { 
+          width: 120px; 
+          height: 120px; 
+          border: 2px solid rgba(0,210,255,0.2); 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          position: relative; 
+          background: rgba(0,0,0,0.5); 
+          z-index: 2;
+          box-shadow: 0 0 30px rgba(0, 210, 255, 0.15),
+                     inset 0 0 20px rgba(0, 210, 255, 0.1);
+        }
+        
+        .core-inner-hub { 
+          position: absolute; 
+          inset: 10px; 
+          border: 2px dashed rgba(0,210,255,0.3); 
+          border-radius: 50%; 
+          will-change: transform;
+        }
+        
+        .hub-icon-svg { 
+          width: 40px; 
+          height: 40px; 
+          filter: drop-shadow(0 0 15px #00d2ff); 
+          will-change: transform;
+          z-index: 3;
+          position: relative;
+        }
+        
+        .hub-label { 
+          font-size: 0.75rem; 
+          font-weight: 800; 
+          color: #00d2ff; 
+          letter-spacing: 3px;
+          text-align: center;
+          margin-top: 15px;
+          text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
 
-                <div className="workspace-grid">
-                  <div className="feed-panel">
-                    <div className="panel-head">Live Transcription</div>
-                    <div className="feed-scroll">
-                      <div className="feed-row">
-                        <span className="timestamp">12:01</span>
-                        <p><strong>Yashwanth:</strong> Core pipeline is ready for deployment.</p>
-                      </div>
-                      <div className="feed-row active">
-                        <span className="timestamp">12:02</span>
-                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ repeat: Infinity, duration: 2 }}>
-                          <strong>Tanushree:</strong> Finalizing the API bridges...
-                        </motion.p>
-                      </div>
-                    </div>
-                  </div>
+        /* OUTPUT STACK */
+        .output-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          overflow: visible;
+          min-height: 180px;
+        }
+        
+        .pill-insight { 
+          background: rgba(255,255,255,0.03); 
+          border: 1px solid rgba(255,255,255,0.08); 
+          padding: 12px 16px; 
+          border-radius: 12px; 
+          display: flex; 
+          align-items: center; 
+          gap: 12px; 
+          font-size: 0.85rem; 
+          font-weight: 600; 
+          color: #ccc; 
+          transition: all 0.3s ease;
+          will-change: transform, opacity;
+          min-height: 50px;
+          width: 100%;
+        }
+        
+        .pill-insight:hover {
+          transform: translateX(5px);
+          border-color: rgba(0, 210, 255, 0.3);
+          background: rgba(0, 210, 255, 0.05);
+        }
+        
+        .p-dot { 
+          width: 8px; 
+          height: 8px; 
+          border-radius: 50%; 
+          flex-shrink: 0;
+          transition: transform 0.3s ease;
+        }
+        
+        .pill-insight:hover .p-dot {
+          transform: scale(1.3);
+        }
+        
+        .p-dot.blue { background: #00d2ff; } 
+        .p-dot.green { background: #00ff88; } 
+        .p-dot.red { background: #ff4d4d; } 
+        .p-dot.yellow { background: #ffd700; }
+        
+        .pipeline-connector { 
+          display: none;
+        }
 
-                  <div className="intel-panel">
-                    <div className="panel-head">AI Intelligence</div>
-                    <div className="summary-skeleton">
-                      <div className="skel-title" />
-                      <div className="skel-line" />
-                      <div className="skel-line" />
-                      <div className="skel-line short" />
-                    </div>
-                    <div className="action-tags">
-                      <div className="tag">Action Item</div>
-                      <div className="tag">Deadline</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+        /* BENTO CENTERED HEADER */
+        .info-section { 
+          position: relative; 
+          z-index: 10; 
+          padding: 120px 20px 80px; /* Increased top padding */
+          max-width: 1200px; 
+          margin: 0 auto; 
+          text-align: center; 
+        }
+        
+        .features-center-header { 
+          margin-bottom: 60px; 
+          position: relative; 
+          display: inline-block; 
+        }
+        
+        .section-label { 
+          color: #00d2ff; 
+          letter-spacing: 3px; 
+          font-size: 0.75rem; 
+          text-transform: uppercase; 
+          font-weight: 800; 
+          margin-bottom: 12px; 
+          display: block; 
+        }
+        
+        .section-title { 
+          font-size: clamp(2.5rem, 6vw, 4rem); 
+          font-weight: 800; 
+          letter-spacing: -0.03em; 
+          margin: 0; 
+          will-change: transform;
+          line-height: 1.2;
+        }
+        
+        .section-title span { color: #00d2ff; }
+        
+        .header-glow-line { 
+          width: 80px; 
+          height: 3px; 
+          background: #00d2ff; 
+          margin: 20px auto 0; 
+          border-radius: 20px; 
+          box-shadow: 0 0 20px #00d2ff; 
+          transition: width 0.3s ease;
+        }
+        
+        .features-center-header:hover .header-glow-line {
+          width: 120px;
+        }
 
-      {/* BENTO GRID (With New Animated SVG Icons) */}
-      <section className="info-section">
-        <div className="section-label">Features</div>
-        <h2 className="section-title">Everything you need to scale.</h2>
-        <div className="bento-grid">
-          <FeatureCard title="Multilingual Intelligence" desc="Automatically transcribe and translate meetings across multiple languages into clear English insights." iconType="neural" size="large" />
-          <FeatureCard title="Action Item Extraction" desc="Identify responsibilities, deadlines, and next steps without manual effort." iconType="task" />
-          <FeatureCard title="Enterprise-Ready Architecture" desc="Built using FastAPI, React, and modular AI pipelines for scalability." iconType="global" />
-          <FeatureCard title="Intelligent Summarization" desc="Generate concise, meaningful summaries that preserve key decisions and discussions." iconType="secure" size="wide" />
+        .bento-grid { 
+          display: grid; 
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+          gap: 24px; 
+          margin-top: 40px; 
+        }
+        
+        .feature-card { 
+          background: rgba(255,255,255,0.02); 
+          border: 1px solid rgba(255,255,255,0.06); 
+          border-radius: 25px; 
+          padding: 30px; 
+          position: relative; 
+          overflow: hidden; 
+          display: flex; 
+          flex-direction: column; 
+          justify-content: flex-start; 
+          text-align: left; 
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: transform, box-shadow, border-color;
+          min-height: 260px;
+        }
+        
+        .feature-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          border-color: rgba(0, 210, 255, 0.2);
+        }
+        
+        .card-hover-highlight { 
+          position: absolute; 
+          inset: 0; 
+          pointer-events: none; 
+          z-index: 0; 
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .feature-card:hover .card-hover-highlight {
+          opacity: 1;
+        }
+        
+        .large { 
+          grid-row: span 2;
+          min-height: 560px;
+          justify-content: space-between;
+        } 
+        
+        .wide { 
+          grid-column: span 2;
+        }
+        
+        /* FIXED: Feature card content spacing */
+        .feature-icon-wrapper { 
+          width: 48px; 
+          height: 48px; 
+          margin-bottom: 20px; 
+          background: rgba(255, 255, 255, 0.05); 
+          border-radius: 12px; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          border: 1px solid rgba(255,255,255,0.1); 
+          position: relative; 
+          z-index: 1; 
+          transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon-wrapper {
+          transform: scale(1.1);
+          border-color: rgba(0, 210, 255, 0.3);
+          background: rgba(0, 210, 255, 0.1);
+        }
+        
+        .feature-card h3 { 
+          font-size: 1.4rem; 
+          font-weight: 700; 
+          margin-bottom: 15px; 
+          position: relative; 
+          z-index: 1; 
+          transition: color 0.3s ease;
+          line-height: 1.3;
+        }
+        
+        .feature-card:hover h3 {
+          color: #00d2ff;
+        }
+        
+        .feature-card p { 
+          color: #aaa; 
+          line-height: 1.6; 
+          font-size: 0.95rem; 
+          position: relative; 
+          z-index: 1; 
+          transition: color 0.3s ease;
+          margin-top: 0;
+        }
+        
+        /* FIXED: Large card specific spacing */
+        .feature-card.large h3 {
+          margin-bottom: 20px;
+          font-size: 1.6rem;
+        }
+        
+        .feature-card.large p {
+          font-size: 1rem;
+          line-height: 1.7;
+          margin-bottom: 20px;
+        }
+        
+        .feature-card.large .feature-icon-wrapper {
+          margin-bottom: 30px;
+          width: 56px;
+          height: 56px;
+        }
+        
+        .feature-card.large .animated-svg {
+          width: 28px;
+          height: 28px;
+        }
+        
+        .animated-svg { 
+          width: 24px; 
+          height: 24px; 
+          will-change: transform, stroke-dashoffset;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+          .pipeline-track {
+            gap: 30px;
+            padding: 30px;
+          }
+          
+          .pipeline-zone-box {
+            max-width: 280px;
+          }
+          
+          .wide {
+            grid-column: span 1;
+          }
+          
+          .feature-card.large .feature-icon-wrapper {
+            width: 52px;
+            height: 52px;
+          }
+          
+          .feature-card.large .animated-svg {
+            width: 26px;
+            height: 26px;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .mw-drifter {
+            display: none;
+          }
+          
+          .hero-h1 {
+            font-size: 2.8rem;
+            margin: 20px 0 15px;
+          }
+          
+          .hero-content p {
+            font-size: 1rem;
+            padding: 0 10px;
+          }
+          
+          .hero-btns {
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+          }
+          
+          .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 0.95rem;
+          }
+          
+          .pipeline-track {
+            flex-direction: column;
+            gap: 40px;
+            padding: 30px 20px;
+            border-radius: 25px;
+            min-height: auto;
+          }
+          
+          .pipeline-zone-box {
+            max-width: 100%;
+            width: 100%;
+            min-height: 250px;
+          }
+          
+          .pipeline-core-container {
+            margin: 20px 0;
+            order: 1;
+            padding: 20px;
+          }
+          
+          .core-outer-ring {
+            width: 100px;
+            height: 100px;
+          }
+          
+          .hub-icon-svg {
+            width: 32px;
+            height: 32px;
+          }
+          
+          .bento-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 0 10px;
+          }
+          
+          .wide, .large {
+            grid-column: span 1;
+            grid-row: span 1;
+            min-height: 280px;
+            justify-content: flex-start;
+          }
+          
+          .feature-card {
+            min-height: 240px;
+            padding: 25px;
+          }
+          
+          .feature-card.large {
+            min-height: 280px;
+          }
+          
+          .feature-card.large h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+          }
+          
+          .feature-card.large p {
+            font-size: 0.95rem;
+          }
+          
+          .feature-card.large .feature-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 20px;
+          }
+          
+          .section-title {
+            font-size: 2.2rem;
+            padding: 0 20px;
+          }
+          
+          .pipeline-subtitle {
+            padding: 0 20px;
+            font-size: 0.95rem;
+          }
+          
+          .aura-blob {
+            width: 400px;
+            height: 400px;
+          }
+          
+          .output-stack {
+            min-height: auto;
+          }
+          
+          .pill-insight {
+            padding: 10px 14px;
+            font-size: 0.8rem;
+          }
+          
+          .zone-header {
+            margin-bottom: 20px;
+          }
+          
+          /* Mobile spacing adjustments */
+          .pipeline-section {
+            padding-top: 60px;
+            margin-top: 60px;
+          }
+          
+          .pipeline-title-section {
+            padding: 40px 20px 20px;
+          }
+          
+          .hero-section {
+            margin-bottom: 0;
+          }
+          
+          .info-section {
+            padding: 80px 20px 60px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .hero-h1 {
+            font-size: 2.2rem;
+          }
+          
+          .hero-section {
+            padding: 80px 16px 30px;
+          }
+          
+          .pipeline-title-section {
+            padding: 30px 16px 15px;
+          }
+          
+          .pipeline-subtitle {
+            font-size: 0.9rem;
+          }
+          
+          .info-section {
+            padding: 60px 16px 40px;
+          }
+          
+          .feature-card {
+            padding: 20px;
+            min-height: 220px;
+          }
+          
+          .feature-card h3 {
+            font-size: 1.2rem;
+          }
+          
+          .feature-card.large h3 {
+            font-size: 1.3rem;
+          }
+          
+          .feature-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            margin-bottom: 15px;
+          }
+          
+          .feature-card.large .feature-icon-wrapper {
+            width: 44px;
+            height: 44px;
+          }
+          
+          .animated-svg {
+            width: 20px;
+            height: 20px;
+          }
+          
+          .feature-card.large .animated-svg {
+            width: 22px;
+            height: 22px;
+          }
+          
+          .btn-primary, .btn-secondary {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+          }
+          
+          .pill-insight {
+            padding: 10px 12px;
+            font-size: 0.75rem;
+            min-height: 45px;
+          }
+          
+          .p-dot {
+            width: 6px;
+            height: 6px;
+          }
+          
+          .section-title {
+            font-size: 1.8rem;
+          }
+          
+          .core-outer-ring {
+            width: 80px;
+            height: 80px;
+          }
+          
+          .hub-icon-svg {
+            width: 28px;
+            height: 28px;
+          }
+        }
+        
+        /* Performance optimizations */
+        button, input, textarea {
+          font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        /* Smooth scrolling */
+        html {
+          scroll-behavior: smooth;
+        }
+        
+        /* Fix for mobile hover */
+        @media (hover: none) {
+          .feature-card:hover,
+          .pipeline-zone-box:hover,
+          .pill-insight:hover {
+            transform: none;
+          }
+          
+          .feature-card:hover .feature-icon-wrapper {
+            transform: none;
+          }
+          
+          .pill-insight:hover .p-dot {
+            transform: none;
+          }
+        }
+      `}</style>
+
+      <div className="landing-root" ref={containerRef} onMouseMove={handleMouseMove}>
+        {/* --- ADVANCED ATMOSPHERE SYSTEM --- */}
+        <div className="aura-container">
+          <motion.div style={{ y: y1 }} className="aura-blob blue" />
+          <motion.div style={{ y: y2 }} className="aura-blob purple" />
+          
+          {/* Scroll-Reactive Drifters */}
+          <motion.div style={{ filter: drifterBlur, opacity: drifterOpacity }} className="mw-drifter d1">Summary AI</motion.div>
+          <motion.div style={{ filter: drifterBlur, opacity: drifterOpacity }} className="mw-drifter d2">English (US)</motion.div>
+          <motion.div style={{ filter: drifterBlur, opacity: drifterOpacity }} className="mw-drifter d3">Action Item +</motion.div>
+          
+          <div className="grid-overlay" />
+          <div className="noise-overlay" />
         </div>
-      </section>
-    </div>
+
+        {/* HERO SECTION - Now properly spaced */}
+        <section className="hero-section">
+          <motion.div 
+            className="hero-content"
+            style={{ opacity: heroOpacity }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.span className="hero-badge">✦ AI Meeting Assistant</motion.span>
+            <motion.h1 className="hero-h1">MeetWise<span>.</span></motion.h1>
+            <motion.p>
+              AI-Powered Multilingual Meeting Intelligence 
+            </motion.p>
+            <div className="hero-btns">
+              <motion.button 
+                whileHover={{ scale: isMobile ? 1 : 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-primary" 
+                onClick={() => window.location.href = "/dashboard"}
+              >
+                Get Started
+              </motion.button>
+              <motion.button 
+                whileHover={{ backgroundColor: isMobile ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.1)" }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-secondary"
+              >
+                Watch Demo
+              </motion.button>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* --- PIPELINE SECTION - Now appears after scrolling --- */}
+        <div className="pipeline-section">
+          <div className="pipeline-title-section">
+            <span className="section-label">Workflow</span>
+            <h2 className="section-title">AI Processing Pipeline<span>.</span></h2>
+            <p className="pipeline-subtitle">Real-time multilingual meeting intelligence workflow</p>
+            <div className="header-glow-line" />
+          </div>
+          
+          <motion.div className="pipeline-visual-container" style={{ scale: componentScale }}>
+            <div className="pipeline-track" style={{ "--x": `${mousePos.x}px`, "--y": `${mousePos.y}px` }}>
+              <div className="track-spotlight" />
+              
+              <div className="pipeline-zone-box">
+                <div className="zone-header">Input Stream</div>
+                <div className="zone-inner input-flex">
+                  <div className="multilingual-glitch-box">
+                    <motion.span animate={{ opacity: [0.2, 1, 0.2] }} transition={{ duration: 2, repeat: Infinity }}>नमस्ते</motion.span>
+                    <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>Bonjour</motion.span>
+                    <motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>你好</motion.span>
+                  </div>
+                  <div className="mini-wave-container">
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div key={i} className="wave-bar" animate={{ height: [10, 30, 10] }} transition={{ repeat: Infinity, duration: 1, delay: i * 0.1 }} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pipeline-core-container">
+                {/* Engine Visual Animations - FIXED: Removed pulse ring, better styling */}
+                <div className="core-outer-ring">
+                  <motion.div 
+                    className="core-inner-hub" 
+                    animate={{ rotate: 360 }} 
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.svg 
+                    className="hub-icon-svg" 
+                    viewBox="0 0 24 24" 
+                    fill="none"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <motion.path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z" fill="#00d2ff" />
+                  </motion.svg>
+                </div>
+                <div className="hub-label">ENGINE CORE</div>
+              </div>
+
+              <div className="pipeline-zone-box">
+                <div className="zone-header">Intelligence</div>
+                <div className="zone-inner output-stack">
+                  <motion.div initial={{ x: 20, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ delay: 0.2, type: "spring" }} className="pill-insight"><div className="p-dot red" /><span>Transcription</span></motion.div>
+                  <motion.div initial={{ x: 20, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ delay: 0.4, type: "spring" }} className="pill-insight"><div className="p-dot green" /><span>Summary</span></motion.div>
+                  <motion.div initial={{ x: 20, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ delay: 0.6, type: "spring" }} className="pill-insight"><div className="p-dot blue" /><span>Action Items</span></motion.div>
+                  <motion.div initial={{ x: 20, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ delay: 0.8, type: "spring" }} className="pill-insight"><div className="p-dot yellow" /><span>Email Notify</span></motion.div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* BENTO GRID */}
+        <section className="info-section">
+          <div className="features-center-header">
+            <span className="section-label">Features</span>
+            <h2 className="section-title">Everything you need to scale<span>.</span></h2>
+            <div className="header-glow-line" />
+          </div>
+          
+          <div className="bento-grid">
+            <FeatureCard title="Multilingual Intelligence" desc="Automatically transcribe and translate meetings across multiple languages into clear English insights. Support for over 50 languages with real-time translation and cultural context preservation." iconType="neural" size="large" />
+            <FeatureCard title="Action Item Extraction" desc="Identify responsibilities, deadlines, and next steps without manual effort. AI automatically detects action items and assigns them to participants." iconType="task" />
+            <FeatureCard title="Enterprise-Ready Architecture" desc="Built using FastAPI, React, and modular AI pipelines for scalability. Supports thousands of concurrent meetings with enterprise-grade security." iconType="global" />
+            <FeatureCard title="Intelligent Summarization" desc="Generate concise, meaningful summaries that preserve key decisions and discussions. Context-aware AI ensures nothing important is missed." iconType="secure" size="wide" />
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
 
-// New FeatureCard with Premium Animated Icons
 function FeatureCard({ title, desc, iconType, size = "" }) {
+  const cardRef = useRef(null);
+  const [cardMousePos, setCardMousePos] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleCardMouseMove = (e) => {
+    if (isMobile) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setCardMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
   const icons = {
     neural: (
       <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
@@ -171,120 +1104,36 @@ function FeatureCard({ title, desc, iconType, size = "" }) {
     ),
     task: (
       <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
-        <motion.rect x="3" y="3" width="18" height="18" rx="2" stroke="#9d50bb" strokeWidth="1.5" whileInView={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 3 }} />
+        <motion.rect x="3" y="3" width="18" height="18" rx="2" stroke="#9d50bb" strokeWidth="1.5" animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 3, repeat: Infinity }} />
         <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
     global: (
       <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
-        <motion.circle cx="12" cy="12" r="10" stroke="#3a7bd5" strokeWidth="1.5" animate={{ rotate: 360 }} transition={{ duration: 5, repeat: Infinity, ease: "linear" }} />
+        <motion.circle cx="12" cy="12" r="10" stroke="#3a7bd5" strokeWidth="1.5" animate={{ rotate: 360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} />
       </svg>
     ),
     secure: (
       <svg viewBox="0 0 24 24" fill="none" className="animated-svg">
-        <motion.path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#00ff88" strokeWidth="1.5" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
+        <motion.path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#00ff88" strokeWidth="1.5" animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 2, repeat: Infinity }} />
       </svg>
     )
   };
 
   return (
-    <motion.div className={`feature-card ${size}`} whileHover={{ y: -15 }}>
+    <motion.div 
+      ref={cardRef}
+      onMouseMove={handleCardMouseMove}
+      className={`feature-card ${size}`} 
+      whileHover={{ y: isMobile ? 0 : -10 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+    >
+      <div className="card-hover-highlight" style={{ background: `radial-gradient(400px circle at ${cardMousePos.x}px ${cardMousePos.y}px, rgba(0, 210, 255, 0.08), transparent 40%)` }} />
       <div className="feature-icon-wrapper">{icons[iconType]}</div>
       <h3>{title}</h3>
       <p>{desc}</p>
-      <div className="card-shine" />
-      <div className="feature-glow" />
     </motion.div>
   );
 }
-
-const landingCSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap');
-
-  .landing-root { background: #020202; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-  .aura-container { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  .aura-blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.15; }
-  .blue { background: #00d2ff; top: -100px; left: -100px; }
-  .purple { background: #9d50bb; bottom: -100px; right: -100px; }
-  .grid-overlay { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 30px 30px; }
-  
-  .hero-section { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 180px 20px 0; text-align: center; }
-  .hero-badge { background: rgba(0,210,255,0.1); border: 1px solid rgba(0,210,255,0.2); padding: 8px 18px; border-radius: 100px; color: #00d2ff; font-size: 0.8rem; font-weight: 700; }
-  .hero-content h1 { font-size: clamp(3.5rem, 8vw, 6rem); font-weight: 800; line-height: 1; margin: 25px 0; letter-spacing: -2px; }
-  .hero-content h1 span { color: #00d2ff; }
-  .hero-content p { color: #888; max-width: 550px; font-size: 1.1rem; margin-bottom: 40px; }
-  
-  .btn-primary { background: #fff; color: #000; padding: 16px 36px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; }
-  .btn-primary:hover { box-shadow: 0 0 30px rgba(255,255,255,0.3); transform: translateY(-3px); }
-  .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 16px 36px; border-radius: 14px; color: #fff; cursor: pointer; }
-
-  /* HANDSOME BLUE BOT STYLES */
-  .bot-anchor { position: absolute; top: 12%; right: 8%; z-index: 1000; }
-  .handsome-bot { position: relative; width: 90px; height: 110px; display: flex; flex-direction: column; align-items: center; }
-  .bot-halo { position: absolute; top: -10px; width: 110px; height: 40px; border: 2px solid #00d2ff; border-radius: 50%; box-shadow: 0 0 15px #00d2ff; }
-  .bot-head-blue { width: 80px; height: 75px; background: linear-gradient(135deg, #007aff, #00d2ff); border-radius: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 35px rgba(0,122,255,0.4); border: 2px solid rgba(255,255,255,0.1); }
-  .glass-visor { width: 80%; height: 50%; background: rgba(0,0,0,0.6); border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-around; }
-  .visor-glow { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: sweep 3s infinite; }
-  @keyframes sweep { 100% { left: 200%; } }
-  .handsome-eyes { display: flex; gap: 10px; }
-  .h-eye { width: 8px; height: 4px; background: #00ffcc; border-radius: 10px; box-shadow: 0 0 8px #00ffcc; }
-  .floating-hand { position: absolute; font-size: 1.2rem; top: 60px; }
-  .floating-hand.left { left: -30px; }
-  .floating-hand.right { right: -30px; }
-  .bot-status-bubble { position: absolute; top: -60px; left: 70px; background: #fff; color: #000; padding: 10px 15px; border-radius: 18px 18px 18px 0; font-weight: 800; font-size: 0.7rem; white-space: nowrap; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-
-  /* MOCKUP UI STYLES */
-  .dashboard-preview { margin-top: 100px; width: 100%; max-width: 1050px; perspective: 2000px; position: relative; }
-  .mockup-frame { background: #080808; border: 1px solid #1a1a1a; border-radius: 24px 24px 0 0; box-shadow: 0 50px 100px rgba(0,0,0,0.9); transform: rotateX(10deg); overflow: hidden; text-align: left; }
-  .mockup-header { background: #111; padding: 12px 25px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #1a1a1a; }
-  .window-controls { display: flex; gap: 8px; }
-  .window-controls span { width: 10px; height: 10px; border-radius: 50%; background: #333; }
-  .address-bar { background: #050505; border: 1px solid #1a1a1a; border-radius: 8px; padding: 4px 15px; color: #444; font-size: 0.7rem; flex: 1; font-family: 'JetBrains Mono'; }
-  .mockup-body { display: flex; height: 500px; }
-  .mockup-sidebar { width: 60px; background: #0a0a0a; border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; }
-  .side-icon-active { width: 24px; height: 24px; background: #00d2ff; border-radius: 6px; box-shadow: 0 0 10px #00d2ff; }
-  .side-icon { width: 24px; height: 24px; background: #1a1a1a; border-radius: 6px; }
-  .side-spacer { flex: 1; }
-  .side-profile { width: 28px; height: 28px; background: #333; border-radius: 50%; }
-  .mockup-main { flex: 1; padding: 30px; display: flex; flex-direction: column; gap: 25px; }
-  .main-top-bar { display: flex; justify-content: space-between; align-items: center; }
-  .breadcrumb { font-size: 0.75rem; color: #444; }
-  .user-stack { display: flex; }
-  .u-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #080808; margin-left: -8px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; }
-  .workspace-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; flex: 1; }
-  .panel-head { font-size: 0.65rem; color: #555; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 15px; }
-  .feed-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; }
-  .feed-row { font-size: 0.8rem; margin-bottom: 15px; display: flex; gap: 15px; color: #666; }
-  .feed-row.active { color: #fff; background: rgba(0,210,255,0.05); padding: 10px; border-radius: 10px; }
-  .timestamp { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #333; }
-  .intel-panel { background: rgba(0,210,255,0.03); border: 1px solid rgba(0,210,255,0.1); border-radius: 20px; padding: 20px; }
-  .skel-title { height: 12px; background: #1a1a1a; border-radius: 4px; width: 60%; margin-bottom: 15px; }
-  .skel-line { height: 8px; background: #111; border-radius: 4px; width: 100%; margin-bottom: 8px; }
-  .skel-line.short { width: 40%; }
-  .action-tags { display: flex; gap: 10px; margin-top: 20px; }
-  .tag { background: rgba(0,210,255,0.1); color: #00d2ff; padding: 4px 10px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; }
-
-  /* BENTO FEATURE CARD STYLES */
-  .info-section { padding: 150px 5%; max-width: 1200px; margin: 0 auto; text-align: left; }
-  .section-label { color: #00d2ff; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 20px; }
-  .section-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 60px; }
-  .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 280px; gap: 24px; }
-  .feature-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 35px; padding: 40px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; backdrop-filter: blur(10px); }
-  .large { grid-row: span 2; }
-  .wide { grid-column: span 2; }
-  .feature-icon-wrapper { width: 60px; height: 60px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
-  .feature-card:hover .feature-icon-wrapper { border-color: #00d2ff; box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); transform: rotate(-5deg); }
-  .animated-svg { width: 35px; height: 35px; }
-  .feature-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
-  .feature-card p { color: #666; line-height: 1.5; font-size: 0.95rem; }
-  .feature-glow { position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(0,210,255,0.1), transparent); opacity: 0; transition: 0.5s; pointer-events: none; }
-  .feature-card:hover .feature-glow { opacity: 1; }
-  .card-shine { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; pointer-events: none; }
-  .feature-card:hover .card-shine { left: 100%; }
-
-  @media (max-width: 900px) {
-    .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
-    .wide, .large { grid-column: span 1; grid-row: span 1; }
-    .hero-content h1 { font-size: 3rem; }
-  }
-`;

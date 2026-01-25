@@ -114,14 +114,3 @@
 .nav-cta-premium:hover .cta-glow {
   left: 150%;
 }
-.logo {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.logo-img {
-  height: 38px;          /* adjust if needed */
-  width: auto;
-  display: block;
-}

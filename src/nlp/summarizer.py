@@ -1,6 +1,7 @@
 from transformers import pipeline
 import spacy
 
+# Load spaCy once
 nlp = spacy.load("en_core_web_md")
 
 
@@ -8,11 +9,11 @@ class MeetingSummariser:
     def __init__(self, max_words=400):
         self.max_words = max_words
 
-        # Abstractive model (open source, CPU-friendly)
+        # ⚡ FAST Abstractive model (DistilBART)
         self.abstracter = pipeline(
             "summarization",
-            model="facebook/bart-large-cnn",
-            device=-1
+            model="sshleifer/distilbart-cnn-12-6",
+            device=-1  # CPU
         )
 
     def _chunk_text(self, text):
@@ -53,17 +54,18 @@ class MeetingSummariser:
         # 1️⃣ Extractive safety net (coverage guaranteed)
         key_points = self._extract_key_sentences(text)
 
-        # 2️⃣ Abstractive summarization
+        # 2️⃣ Abstractive summarization (FAST)
         chunks = self._chunk_text(text)
         abstractive_parts = []
 
         for chunk in chunks:
             out = self.abstracter(
                 chunk,
-                max_length=140,
-                min_length=60,
+                max_length=120,   # 🔻 Reduced for speed
+                min_length=50,    # 🔻 Reduced for speed
                 do_sample=False
             )[0]["summary_text"]
+
             abstractive_parts.append(out)
 
         abstractive_summary = " ".join(abstractive_parts)

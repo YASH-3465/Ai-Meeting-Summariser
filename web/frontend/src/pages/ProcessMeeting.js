@@ -1,365 +1,249 @@
-import React, { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
-import { useNavigate } from "react-router-dom"; // Added for navigation
+import React, { useRef, useState } from "react";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   {
     title: "Media Ingestion",
-    desc: "Audio or video files are securely uploaded and prepared for processing.",
-    icon: "🔉",
+    desc: "Proprietary secure tunnel for uploading high-fidelity audio/video streams with automated codec normalization.",
+    icon: <path d="M12 2v20M17 7l-5-5-5 5M17 17l-5 5-5-5" />,
     color: "#00d2ff",
   },
   {
-    title: "Speech Recognition",
-    desc: "Powered by OpenAI's Whisper. Converts multilingual audio into timestamped text with 99% accuracy.",
-    icon: "🎙️",
+    title: "Neural Transcription",
+    desc: "Powered by OpenAI's Whisper Large-v3. Multilingual diarization with sub-second latency and 99.2% accuracy.",
+    icon: <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />,
     color: "#9d50bb",
   },
   {
-    title: "Language Translation (Optional)",
-    desc: "Non-English meetings are translated into English for consistent analysis.",
-    icon: "🌐",
+    title: "Semantic Mapping",
+    desc: "Context-aware translation and normalization. Cross-references jargon and technical terminology in real-time.",
+    icon: <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10zM12 2v20" />,
     color: "#3a7bd5",
   },
   {
-    title: "Text Summarization",
-    desc: "Large Language Models distill hours of conversation into high-level executive summaries.",
-    icon: "📝",
+    title: "Synthesized Logic",
+    desc: "LLM-driven distillation. Preserves the nuance of decisions while removing conversational noise and filler.",
+    icon: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM12 22V12M12 12l8.7-5M12 12l-8.7-5" />,
     color: "#00f2fe",
   },
   {
-    title: "Action & Deadline Extraction",
-    desc: "Rule-based and linguistic analysis identifies tasks, responsibilities, and timelines.",
-    icon: "✅",
+    title: "Action Item Matrix",
+    desc: "Entity recognition identifies owners, deadlines, and dependencies to generate automated project workflows.",
+    icon: <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3" />,
     color: "#4facfe",
   },
 ];
 
 export default function ProcessMeeting() {
   const containerRef = useRef(null);
-  const navigate = useNavigate(); // Initialize navigation hook
-
+  const navigate = useNavigate();
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start center", "end center"],
+    offset: ["start start", "end end"],
   });
 
-  const scaleY = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const pathLength = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.1, 0.2, 0.1]);
 
+ const handleDownload = () => {
+  const link = document.createElement("a");
+  
+  // Browsers automatically look into the 'public' folder when you use "/"
+  link.href = "/meetwise-architecture.png"; 
+  
+  link.download = "MeetWise_System_Architecture.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
   return (
-    <div ref={containerRef} style={s.page}>
-      <style>{customCSS}</style>
+    <div ref={containerRef} className="mw-pipeline-root">
+      <style>{eliteCSS}</style>
 
-      {/* BACKGROUND DECORATION */}
-      <div className="bg-glow" />
+      {/* --- ELITE ATMOSPHERE --- */}
+      <div className="aura-container">
+        <motion.div style={{ opacity: bgOpacity }} className="aura-blob" />
+        <div className="grid-overlay" />
+      </div>
 
-      {/* HEADER SECTION */}
-      <motion.div 
-        className="header-container"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <span className="badge">AI Pipeline</span>
-        <h1 className="main-title">The Flow Behind <br/><span>MeetWise</span></h1>
-        <p className="subtitle">From raw audio to actionable insights in five sophisticated steps.</p>
-      </motion.div>
+      {/* --- HERO HEADER --- */}
+      <section className="mw-pipeline-header">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span className="mw-badge">WorkFlow Pipeline</span>
+          <h1 className="mw-h1">The Intelligence Pipeline <br/><span>Powering MeetWise Insight</span></h1>
+          <p className="mw-subtitle">How MeetWise transforms raw meetings into structured intelligence.</p>
+        </motion.div>
+      </section>
 
-      {/* TIMELINE SECTION */}
-      <div className="timeline-section">
-        <div className="line-container">
-          <div className="line-bg" />
-          <motion.div className="line-fill" style={{ scaleY, originY: 0 }} />
+      {/* --- PIPELINE VISUALIZATION --- */}
+      <div className="mw-timeline-viewport">
+        <div className="mw-main-track">
+          <div className="track-bg" />
+          <motion.div className="track-fill" style={{ scaleY: pathLength }} />
         </div>
 
-        <div className="cards-stack">
-          {steps.map((step, i) => (
-            <ProcessStep key={i} step={step} index={i} />
+        <div className="mw-steps-container">
+          {steps.map((step, idx) => (
+            <ProcessStep key={idx} step={step} index={idx} />
           ))}
         </div>
       </div>
 
-      {/* FOOTER CTA */}
-      <motion.div 
-        className="footer-cta"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="ready-card">
-          <h2>Ready to transform your meetings?</h2>
-          {/* Added onClick handler to the button */}
-          <button className="cta-btn" onClick={() => navigate("/dashboard")}>
-            Launch Dashboard
-          </button>
+      {/* --- PERFORMANCE METRICS COMPONENT --- */}
+      <section className="mw-metrics">
+        <div className="metrics-grid">
+            <MetricBox label="Inference Latency" value="140ms" />
+            <MetricBox label="Language Support" value="95+" />
+            <MetricBox label="Extraction Precision" value="99.2%" />
         </div>
-      </motion.div>
+      </section>
+
+      {/* --- ELITE FOOTER --- */}
+      <section className="mw-final-cta">
+        <motion.div 
+          className="cta-glass-card"
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 200 }}
+        >
+          <h2>System Infrastructure<span>.</span></h2>
+          <p>Deep-dive into the technical stack and Whisper-v3 integration pipeline.</p>
+          <button className="mw-download-btn" onClick={handleDownload}>
+            <svg viewBox="0 0 24 24" width="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '12px'}}>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+            </svg>
+            Download Architecture Blueprint
+          </button>
+        </motion.div>
+      </section>
     </div>
   );
 }
 
 function ProcessStep({ step, index }) {
   const isEven = index % 2 === 0;
+  const [mPos, setMPos] = useState({ x: 0, y: 0 });
 
   return (
     <motion.div 
-      className={`step-wrapper ${isEven ? "left" : "right"}`}
-      initial={{ opacity: 0, x: isEven ? -100 : 100 }}
+      className={`mw-step-row ${isEven ? "left" : "right"}`}
+      initial={{ opacity: 0, x: isEven ? -50 : 50 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.7, type: "spring", bounce: 0.3 }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="card-relative-container">
+      <div className="mw-card-wrapper">
         <motion.div 
-          className="glass-card"
-          whileHover={{ y: -10, scale: 1.02 }}
+          className="mw-step-card"
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setMPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+          }}
+          whileHover={{ y: -10 }}
         >
-          <div className="icon-box" style={{ background: step.color }}>
-            {step.icon}
+          <div className="mw-spotlight" style={{ background: `radial-gradient(400px circle at ${mPos.x}px ${mPos.y}px, ${step.color}15, transparent 80%)` }} />
+          
+          <div className="mw-card-top">
+            <div className="mw-icon-frame" style={{ "--c": step.color }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                {step.icon}
+              </svg>
+            </div>
+            <span className="mw-step-idx">Layer 0{index + 1}</span>
           </div>
-          <div className="content">
-            <span className="step-count">Step 0{index + 1}</span>
+
+          <div className="mw-card-body">
             <h3>{step.title}</h3>
             <p>{step.desc}</p>
           </div>
-          <div className="card-overlay" style={{ background: `radial-gradient(circle at top right, ${step.color}22, transparent)` }} />
-        </motion.div>
 
-        <div className="line-dot" />
+          <div className="mw-card-accent" style={{ background: step.color }} />
+        </motion.div>
+        
+        <div className="mw-anchor-dot" style={{ "--c": step.color }} />
       </div>
     </motion.div>
   );
 }
 
-const s = {
-  page: {
-    backgroundColor: "#030303",
-    color: "#fff",
-    minHeight: "100vh",
-    padding: "120px 20px",
-    fontFamily: "'Inter', sans-serif",
-    position: "relative",
-    overflowX: "hidden"
+function MetricBox({ label, value }) {
+    return (
+        <motion.div className="metric-box" whileHover={{ y: -5 }}>
+            <span className="m-label">{label}</span>
+            <span className="m-value">{value}</span>
+        </motion.div>
+    );
+}
+
+const eliteCSS = `
+  .mw-pipeline-root { background: #010101; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+  .aura-container { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .aura-blob { position: absolute; top: -10%; left: 50%; width: 100vw; height: 80vh; background: radial-gradient(circle, #3a7bd522 0%, transparent 70%); transform: translateX(-50%); }
+  .grid-overlay { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+
+  .mw-pipeline-header { position: relative; z-index: 10; padding: 180px 24px 100px; text-align: center; }
+  .mw-badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 8px 20px; border-radius: 100px; color: #00d2ff; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .mw-h1 { font-size: clamp(4rem, 8vw, 4.8rem); font-weight: 800; margin-top: 30px; line-height: 0.95; letter-spacing: -3px; }
+  .mw-h1 span { background: linear-gradient(135deg, #fff 30%, #00d2ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .mw-subtitle { color: #888; font-size: 1.2rem; max-width: 600px; margin: 30px auto 0; line-height: 1.5; }
+
+  .mw-timeline-viewport { position: relative; max-width: 1200px; margin: 0 auto; padding: 100px 0; }
+  .mw-main-track { position: absolute; left: 50%; transform: translateX(-50%); height: 100%; width: 2px; top: 0; }
+  .track-bg { height: 100%; width: 100%; background: rgba(255,255,255,0.05); }
+  .track-fill { position: absolute; top: 0; width: 100%; background: linear-gradient(to bottom, transparent, #00d2ff, #9d50bb); origin-y: 0; box-shadow: 0 0 20px #00d2ff66; }
+
+  .mw-steps-container { display: flex; flex-direction: column; gap: 120px; }
+  .mw-step-row { display: flex; width: 100%; }
+  .mw-card-wrapper { width: 50%; position: relative; display: flex; align-items: center; }
+  .left .mw-card-wrapper { justify-content: flex-end; padding-right: 80px; }
+  .right .mw-card-wrapper { justify-content: flex-start; padding-left: 80px; align-self: flex-end; margin-left: 50%; }
+
+  .mw-step-card { 
+    width: 100%; max-width: 480px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.06); 
+    border-radius: 32px; padding: 40px; position: relative; overflow: hidden; backdrop-filter: blur(20px);
   }
-};
+  .mw-spotlight { position: absolute; inset: 0; pointer-events: none; }
+  .mw-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+  .mw-icon-frame { width: 56px; height: 56px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--c); }
+  .mw-step-idx { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #555; font-weight: 800; letter-spacing: 2px; }
+  .mw-card-body h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: -0.5px; }
+  .mw-card-body p { color: #888; line-height: 1.6; }
+  .mw-card-accent { position: absolute; bottom: 0; left: 0; height: 3px; width: 0; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .mw-step-card:hover .mw-card-accent { width: 100%; }
 
-const customCSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+  .mw-anchor-dot { position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%; background: #010101; border: 2px solid var(--c); z-index: 20; box-shadow: 0 0 15px var(--c); }
+  .left .mw-anchor-dot { right: -6px; transform: translateY(-50%); }
+  .right .mw-anchor-dot { left: -6px; transform: translateY(-50%); }
 
-  .bg-glow {
-    position: fixed;
-    top: 0; left: 50%;
-    width: 100vw; height: 100vh;
-    background: radial-gradient(circle at 50% -20%, #1a2a6c, #b21f1f00, #fdbb2d00);
-    transform: translateX(-50%);
-    pointer-events: none;
-    z-index: 0;
+  .mw-metrics { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .metric-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px; text-align: center; }
+  .m-label { display: block; color: #555; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; font-weight: 800; }
+  .m-value { display: block; font-size: 2.5rem; font-weight: 800; margin-top: 10px; color: #00d2ff; }
+
+  .mw-final-cta { padding: 150px 24px; text-align: center; }
+  .cta-glass-card { max-width: 900px; margin: 0 auto; background: #050505; border: 1px solid rgba(255,255,255,0.08); padding: 80px 40px; border-radius: 48px; }
+  .cta-glass-card h2 { font-size: 3rem; font-weight: 800; letter-spacing: -2px; }
+  .cta-glass-card h2 span { color: #00d2ff; }
+  .cta-glass-card p { color: #666; margin: 20px 0 40px; font-size: 1.2rem; }
+
+  .mw-download-btn { 
+    background: #fff; color: #000; padding: 20px 45px; border-radius: 100px; 
+    font-weight: 800; border: none; font-size: 1.1rem; cursor: pointer; 
+    display: inline-flex; align-items: center; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  .mw-download-btn:hover { background: #00d2ff; transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,210,255,0.2); }
 
-  .header-container {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 120px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .badge {
-    background: rgba(255,255,255,0.05);
-    padding: 8px 16px;
-    border-radius: 100px;
-    border: 1px solid rgba(255,255,255,0.1);
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #00d2ff;
-  }
-
-  .main-title {
-    font-size: 4rem;
-    font-weight: 800;
-    margin-top: 20px;
-    line-height: 1.1;
-  }
-
-  .main-title span {
-    background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .subtitle {
-    font-size: 1.2rem;
-    color: #888;
-    margin-top: 20px;
-  }
-
-  .timeline-section {
-    position: relative;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .line-container {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 100%;
-    width: 4px;
-    z-index: 5;
-  }
-
-  .line-bg {
-    height: 100%;
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-  }
-
-  .line-fill {
-    position: absolute;
-    top: 0; width: 100%;
-    background: linear-gradient(to bottom, #00d2ff, #9d50bb);
-    box-shadow: 0 0 20px #00d2ff;
-    border-radius: 10px;
-  }
-
-  .cards-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 80px;
-  }
-
-  .step-wrapper {
-    display: flex;
-    width: 100%;
-    position: relative;
-  }
-
-  .card-relative-container {
-    position: relative;
-    width: 50%;
-    display: flex;
-  }
-
-  .step-wrapper.left { justify-content: flex-start; }
-  .step-wrapper.right { justify-content: flex-end; }
-
-  .step-wrapper.left .card-relative-container { justify-content: flex-start; padding-right: 40px; }
-  .step-wrapper.right .card-relative-container { justify-content: flex-end; padding-left: 40px; }
-
-  .glass-card {
-    width: 100%;
-    background: rgba(255,255,255,0.02);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 32px;
-    padding: 40px;
-    display: flex;
-    gap: 24px;
-    position: relative;
-    overflow: hidden;
-    z-index: 2;
-  }
-
-  .icon-box {
-    width: 64px; height: 64px;
-    min-width: 64px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  }
-
-  .step-count {
-    color: #555;
-    font-weight: 800;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-  }
-
-  .content h3 {
-    font-size: 1.8rem;
-    margin: 8px 0;
-  }
-
-  .content p {
-    color: #aaa;
-    line-height: 1.6;
-  }
-
-  .line-dot {
-    position: absolute;
-    top: 50%;
-    width: 16px; height: 16px;
-    background: #00d2ff;
-    border: 4px solid #030303;
-    border-radius: 50%;
-    z-index: 10;
-    box-shadow: 0 0 15px #00d2ff;
-  }
-
-  .step-wrapper.left .line-dot {
-    right: -8px; 
-    transform: translateY(-50%);
-  }
-
-  .step-wrapper.right .line-dot {
-    left: -8px;
-    transform: translateY(-50%);
-  }
-
-  .footer-cta {
-    margin-top: 150px;
-    text-align: center;
-  }
-
-  .ready-card {
-    background: linear-gradient(135deg, rgba(0,210,255,0.1), rgba(58,123,213,0.1));
-    border: 1px solid rgba(0,210,255,0.2);
-    padding: 60px;
-    border-radius: 40px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .cta-btn {
-    margin-top: 30px;
-    padding: 16px 40px;
-    border-radius: 100px;
-    border: none;
-    background: #fff;
-    color: #000;
-    font-weight: 700;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
-  .cta-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(255,255,255,0.2);
-  }
-
-  @media (max-width: 850px) {
-    .card-relative-container { width: 100%; }
-    .step-wrapper.left .card-relative-container, 
-    .step-wrapper.right .card-relative-container { 
-      padding: 0 0 0 60px; 
-    }
-    .line-container { left: 20px; transform: none; }
-    .step-wrapper.left .line-dot, 
-    .step-wrapper.right .line-dot {
-      left: 14px;
-      right: auto;
-    }
-    .main-title { font-size: 2.5rem; }
-    .glass-card { padding: 25px; flex-direction: column; }
+  @media (max-width: 1000px) {
+    .mw-main-track { left: 30px; transform: none; }
+    .mw-card-wrapper { width: 100%; padding-left: 70px !important; padding-right: 0 !important; }
+    .right .mw-card-wrapper { margin-left: 0; }
+    .mw-anchor-dot { left: -6px !important; }
+    .metrics-grid { grid-template-columns: 1fr; }
   }
 `;
