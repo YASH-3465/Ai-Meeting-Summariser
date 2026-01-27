@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import HeroShaderBackground from "./HeroShaderBackground";
+
 
 const steps = [
   {
@@ -60,6 +62,8 @@ export default function ProcessMeeting() {
   return (
     <div ref={containerRef} className="mw-pipeline-root">
       <style>{eliteCSS}</style>
+
+      <HeroShaderBackground />
 
       {/* --- ELITE ATMOSPHERE --- */}
       <div className="aura-container">
@@ -180,19 +184,24 @@ function MetricBox({ label, value }) {
 }
 
 const eliteCSS = `
-  .mw-pipeline-root { background: #010101; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at 50% 50%, #030d12 0%, #020202 100%) !important;
+  }
+  .mw-pipeline-root { background: #010101; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden;background: transparent !important; }
 
   .aura-container { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
   .aura-blob { position: absolute; top: -10%; left: 50%; width: 100vw; height: 80vh; background: radial-gradient(circle, #3a7bd522 0%, transparent 70%); transform: translateX(-50%); }
   .grid-overlay { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
 
-  .mw-pipeline-header { position: relative; z-index: 10; padding: 180px 24px 100px; text-align: center; }
+  .mw-pipeline-header { position: relative; z-index: 10; padding: 180px 24px 100px; text-align: center;z-index: 10; }
   .mw-badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 8px 20px; border-radius: 100px; color: #00d2ff; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
   .mw-h1 { font-size: clamp(4rem, 8vw, 4.8rem); font-weight: 800; margin-top: 30px; line-height: 0.95; letter-spacing: -3px; }
   .mw-h1 span { background: linear-gradient(135deg, #fff 30%, #00d2ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .mw-subtitle { color: #888; font-size: 1.2rem; max-width: 600px; margin: 30px auto 0; line-height: 1.5; }
 
-  .mw-timeline-viewport { position: relative; max-width: 1200px; margin: 0 auto; padding: 100px 0; }
+  .mw-timeline-viewport { position: relative; max-width: 1200px; margin: 0 auto; padding: 100px 0;z-index: 10; }
   .mw-main-track { position: absolute; left: 50%; transform: translateX(-50%); height: 100%; width: 2px; top: 0; }
   .track-bg { height: 100%; width: 100%; background: rgba(255,255,255,0.05); }
   .track-fill { position: absolute; top: 0; width: 100%; background: linear-gradient(to bottom, transparent, #00d2ff, #9d50bb); origin-y: 0; box-shadow: 0 0 20px #00d2ff66; }
@@ -206,6 +215,9 @@ const eliteCSS = `
   .mw-step-card { 
     width: 100%; max-width: 480px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.06); 
     border-radius: 32px; padding: 40px; position: relative; overflow: hidden; backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.02) !important;
+    backdrop-filter: blur(15px) !important; /* Makes shader look amazing behind cards */
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
   .mw-spotlight { position: absolute; inset: 0; pointer-events: none; }
   .mw-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
@@ -220,13 +232,13 @@ const eliteCSS = `
   .left .mw-anchor-dot { right: -6px; transform: translateY(-50%); }
   .right .mw-anchor-dot { left: -6px; transform: translateY(-50%); }
 
-  .mw-metrics { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
+  .mw-metrics { padding: 100px 24px; max-width: 1200px; margin: 0 auto;z-index: 10; }
   .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .metric-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px; text-align: center; }
   .m-label { display: block; color: #555; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; font-weight: 800; }
   .m-value { display: block; font-size: 2.5rem; font-weight: 800; margin-top: 10px; color: #00d2ff; }
 
-  .mw-final-cta { padding: 150px 24px; text-align: center; }
+  .mw-final-cta { padding: 150px 24px; text-align: center;z-index: 10; }
   .cta-glass-card { max-width: 900px; margin: 0 auto; background: #050505; border: 1px solid rgba(255,255,255,0.08); padding: 80px 40px; border-radius: 48px; }
   .cta-glass-card h2 { font-size: 3rem; font-weight: 800; letter-spacing: -2px; }
   .cta-glass-card h2 span { color: #00d2ff; }

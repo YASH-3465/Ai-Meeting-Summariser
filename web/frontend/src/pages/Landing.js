@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import HeroShaderBackground from "./HeroShaderBackground";
 
 export default function MeetWiseUltimate() {
   const containerRef = useRef(null);
@@ -42,7 +43,7 @@ export default function MeetWiseUltimate() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap');
-
+        <GlobalNeuralGrid />
         * {
           box-sizing: border-box;
           margin: 0;
@@ -147,11 +148,15 @@ export default function MeetWiseUltimate() {
           flex-direction: column; 
           align-items: center; 
           justify-content: center; 
-          padding: 120px 20px 40px; 
+          padding: 40px 20px 40px; 
           text-align: center;
           min-height: 100vh;
           margin-bottom: 0; /* Remove margin to create proper spacing */
         }
+        .hero-h1 span { 
+        color: #00d2ff; 
+        text-shadow: 0 0 30px rgba(0,210,255,0.8); /* Increased glow */
+        }  
         
         @media (max-width: 768px) {
           .hero-section {
@@ -203,6 +208,7 @@ export default function MeetWiseUltimate() {
           flex-wrap: wrap;
           margin-top: 40px; /* Increased spacing */
         }
+          
         
         .btn-primary, .btn-secondary {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -282,7 +288,8 @@ export default function MeetWiseUltimate() {
         
         .pipeline-track { 
           position: relative; 
-          min-height: 400px;
+          height: auto;
+          min-height: 450px;
           background: rgba(255,255,255,0.02); 
           border: 1px solid rgba(255, 255, 255, 0.05); 
           border-radius: 30px; 
@@ -311,9 +318,10 @@ export default function MeetWiseUltimate() {
         }
         
         .pipeline-zone-box { 
+        flex:1;
           width: 100%;
           max-width: 300px; 
-          min-height: 280px;
+          min-height: 350px;
           background: rgba(255,255,255,0.02); 
           border: 1px solid rgba(255,255,255,0.05); 
           border-radius: 24px; 
@@ -434,26 +442,31 @@ export default function MeetWiseUltimate() {
         .output-stack {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 18px;
           overflow: visible;
           min-height: 180px;
+          flex:1;
         }
         
         .pill-insight { 
           background: rgba(255,255,255,0.03); 
           border: 1px solid rgba(255,255,255,0.08); 
-          padding: 12px 16px; 
+          padding: 10px 14px; 
           border-radius: 12px; 
           display: flex; 
           align-items: center; 
           gap: 12px; 
-          font-size: 0.85rem; 
+          font-size: 0.8rem; 
           font-weight: 600; 
           color: #ccc; 
           transition: all 0.3s ease;
           will-change: transform, opacity;
           min-height: 50px;
           width: 100%;
+          white-space: nowrap; 
+          overflow: hidden;
+          text-overflow: ellipsis;
+          box-sizing: border-box;
         }
         
         .pill-insight:hover {
@@ -667,11 +680,24 @@ export default function MeetWiseUltimate() {
             gap: 30px;
             padding: 30px;
           }
-          
-          .pipeline-zone-box {
-            max-width: 280px;
-          }
-          
+         .pipeline-zone-box { 
+  width: 100%;
+  /* Increased from 280px to 300px to give the text more breathing room */
+  max-width: 300px; 
+  /* Changed from a fixed min-height to auto so it grows with the pills */
+  min-height: auto; 
+  background: rgba(255,255,255,0.02); 
+  border: 1px solid rgba(255,255,255,0.05); 
+  border-radius: 24px; 
+  padding: 24px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: flex-start;
+  z-index: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* This prevents any child from visually leaking */
+  overflow: hidden; 
+}
           .wide {
             grid-column: span 1;
           }
@@ -714,6 +740,44 @@ export default function MeetWiseUltimate() {
             padding: 16px 24px;
             font-size: 0.95rem;
           }
+          /* Ensure the root doesn't block the background */
+/* Update these specific sections in your <style> tag */
+
+body {
+  overflow-x: hidden;
+  /* Move the gradient here so it's the absolute bottom layer */
+  background: radial-gradient(circle at 50% 50%, #030d12 0%, #020202 100%);
+}
+
+.landing-root { 
+  /* Crucial: Must be transparent to see the shader and body gradient */
+  background: transparent !important; 
+  color: #fff; 
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  position: relative;
+  z-index: 1;
+}
+
+.aura-container { 
+  position: fixed; 
+  inset: 0; 
+  /* z-index must be higher than the shader (-2) but lower than content (10) */
+  z-index: 0; 
+  pointer-events: none; 
+}
+
+.mw-drifter { 
+  position: fixed; 
+  /* This ensures they stay on top of the shader but behind the text */
+  z-index: 5; 
+  padding: 10px 20px; 
+  /* ... rest of your drifter styles ... */
+}
+
+/* Ensure sections don't have their own backgrounds */
+.hero-section, .pipeline-section, .info-section {
+  background: transparent !important;
+}
           
           .pipeline-track {
             flex-direction: column;
@@ -798,13 +862,32 @@ export default function MeetWiseUltimate() {
           }
           
           .output-stack {
-            min-height: auto;
-          }
-          
-          .pill-insight {
-            padding: 10px 14px;
-            font-size: 0.8rem;
-          }
+  display: flex;
+  flex-direction: column;
+  /* Tightened the gap slightly to ensure they all fit vertically */
+  gap: 10px; 
+  width: 100%;
+  height: 100%;
+  /* Ensures pills are centered within the box padding */
+  justify-content: center;
+  align-items: stretch;
+}
+
+.pill-insight { 
+  background: rgba(255,255,255,0.03); 
+  border: 1px solid rgba(255,255,255,0.08); 
+  padding: 10px 14px; 
+  border-radius: 12px; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  font-size: 0.8rem; 
+  font-weight: 600; 
+  color: #ccc; 
+  /* CRITICAL: This ensures the pill never exceeds its parent width */
+  width: 100%;
+  box-sizing: border-box;
+}
           
           .zone-header {
             margin-bottom: 20px;
@@ -960,6 +1043,7 @@ export default function MeetWiseUltimate() {
 
         {/* HERO SECTION - Now properly spaced */}
         <section className="hero-section">
+          <HeroShaderBackground />
           <motion.div 
             className="hero-content"
             style={{ opacity: heroOpacity }}
