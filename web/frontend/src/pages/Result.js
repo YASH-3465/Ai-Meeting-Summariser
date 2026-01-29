@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-
+import HeroShaderBackground from "./HeroShaderBackground";
 export default function Result() {
   const { state } = useLocation();
 

@@ -215,9 +215,9 @@ body {
   .mw-step-card { 
     width: 100%; max-width: 480px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.06); 
     border-radius: 32px; padding: 40px; position: relative; overflow: hidden; backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.02) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
     backdrop-filter: blur(15px) !important; /* Makes shader look amazing behind cards */
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
   }
   .mw-spotlight { position: absolute; inset: 0; pointer-events: none; }
   .mw-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
@@ -228,21 +228,21 @@ body {
   .mw-card-accent { position: absolute; bottom: 0; left: 0; height: 3px; width: 0; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
   .mw-step-card:hover .mw-card-accent { width: 100%; }
 
-  .mw-anchor-dot { position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%; background: #010101; border: 2px solid var(--c); z-index: 20; box-shadow: 0 0 15px var(--c); }
+  .mw-anchor-dot { position: absolute; top: 50%; width: 14px; height: 12px; border-radius: 50%; background: #010101; border: 3px solid var(--c); z-index: 20; box-shadow: 0 0 15px var(--c); }
   .left .mw-anchor-dot { right: -6px; transform: translateY(-50%); }
   .right .mw-anchor-dot { left: -6px; transform: translateY(-50%); }
 
   .mw-metrics { padding: 100px 24px; max-width: 1200px; margin: 0 auto;z-index: 10; }
   .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .metric-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px; text-align: center; }
+  .metric-box { background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.18); border-radius: 24px; padding: 40px; text-align: center; }
   .m-label { display: block; color: #555; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; font-weight: 800; }
   .m-value { display: block; font-size: 2.5rem; font-weight: 800; margin-top: 10px; color: #00d2ff; }
 
   .mw-final-cta { padding: 150px 24px; text-align: center;z-index: 10; }
-  .cta-glass-card { max-width: 900px; margin: 0 auto; background: #050505; border: 1px solid rgba(255,255,255,0.08); padding: 80px 40px; border-radius: 48px; }
+  .cta-glass-card { max-width: 900px; margin: 0 auto; background: rgba(68, 68, 68, 0.4) !important; border: 2px solid rgba(255, 255, 255, 0.15); padding: 80px 40px; border-radius: 48px; }
   .cta-glass-card h2 { font-size: 3rem; font-weight: 800; letter-spacing: -2px; }
-  .cta-glass-card h2 span { color: #00d2ff; }
-  .cta-glass-card p { color: #666; margin: 20px 0 40px; font-size: 1.2rem; }
+  .cta-glass-card h2 span { color: #ffffff; }
+  .cta-glass-card p { color: #d1d1d1; margin: 20px 0 40px; font-size: 1.2rem; }
 
   .mw-download-btn { 
     background: #fff; color: #000; padding: 20px 45px; border-radius: 100px; 

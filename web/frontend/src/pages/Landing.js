@@ -81,7 +81,7 @@ export default function MeetWiseUltimate() {
         .aura-container { 
           position: fixed; 
           inset: 0; 
-          z-index: 0; 
+          z-index: 1; 
           pointer-events: none; 
           overflow: hidden; 
         }
@@ -116,7 +116,7 @@ export default function MeetWiseUltimate() {
 
         .mw-drifter { 
           position: fixed; 
-          z-index: 1; 
+          z-index: 100; 
           padding: 10px 20px; 
           border-radius: 12px; 
           border: 1px solid rgba(255, 255, 255, 0.12); 
@@ -755,7 +755,7 @@ body {
   color: #fff; 
   font-family: 'Plus Jakarta Sans', sans-serif; 
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .aura-container { 
@@ -1027,11 +1027,12 @@ body {
       `}</style>
 
       <div className="landing-root" ref={containerRef} onMouseMove={handleMouseMove}>
+        
         {/* --- ADVANCED ATMOSPHERE SYSTEM --- */}
         <div className="aura-container">
           <motion.div style={{ y: y1 }} className="aura-blob blue" />
           <motion.div style={{ y: y2 }} className="aura-blob purple" />
-          
+          <HeroShaderBackground />
           {/* Scroll-Reactive Drifters */}
           <motion.div style={{ filter: drifterBlur, opacity: drifterOpacity }} className="mw-drifter d1">Summary AI</motion.div>
           <motion.div style={{ filter: drifterBlur, opacity: drifterOpacity }} className="mw-drifter d2">English (US)</motion.div>
@@ -1043,7 +1044,7 @@ body {
 
         {/* HERO SECTION - Now properly spaced */}
         <section className="hero-section">
-          <HeroShaderBackground />
+          
           <motion.div 
             className="hero-content"
             style={{ opacity: heroOpacity }}

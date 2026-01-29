@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import HeroShaderBackground from "./HeroShaderBackground";
 
 const members = [
    { 
@@ -65,6 +66,7 @@ export default function Team() {
     <div style={s.page}>
       <style>{teamCSS}</style>
       
+       <HeroShaderBackground />
       {/* Dynamic Background Glow */}
       <motion.div 
         className="dynamic-bg" 
@@ -213,7 +215,7 @@ function TeamCard({ member, isSelected, onClick }) {
 
 const s = {
   page: {
-    backgroundColor: "#020202",
+    backgroundColor: "transparent",
     color: "#fff",
     minHeight: "100vh",
     padding: "100px 20px",

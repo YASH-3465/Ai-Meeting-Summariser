@@ -1,11 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
+import HeroShaderBackground from "./HeroShaderBackground";
 
 export default function About() {
   return (
     <div className="about-root">
       <style>{aboutCSS}</style>
 
+     <HeroShaderBackground />
       {/* BACKGROUND DECO */}
       <div className="about-glow-top" />
       <div className="about-grid" />
@@ -138,7 +140,7 @@ const aboutCSS = `
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
 
   .about-root {
-    background-color: #030303;
+    background-color: transparent !important;
     color: #fff;
     min-height: 100vh;
     font-family: 'Plus Jakarta Sans', sans-serif;

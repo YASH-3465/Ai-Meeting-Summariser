@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ToggleSwitch from "../components/ToggleSwitch";
 import AIAssistant from "../components/AIAssistant";
+import HeroShaderBackground from "./HeroShaderBackground";
+
 
 export default function Dashboard() {
 const navigate = useNavigate();
@@ -119,6 +121,7 @@ setStage("results");
     <div className="dash-root">
       <style>{dashStyles}</style>
       
+      <HeroShaderBackground />
       {/* BACKGROUND ELEMENTS */}
       <div className="bg-grid-overlay" />
       <div className="ambient-glow" />
@@ -307,21 +310,25 @@ setStage("results");
 
 const dashStyles = `
   .dash-root {
-    background: #050505;
+    background:transparent !important;
     color: #fff;
     min-height: 100vh;
     padding-top: 100px; /* Space for Navbar */
     position: relative;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    z-index:1;
   }
 
-  .bg-grid-overlay {
-    position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 45px 45px;
-  }
-
+ .bg-grid-overlay {
+  position: fixed; 
+  inset: 0;
+  /* Use very faint lines - 0.02 opacity is key */
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: -1; 
+  pointer-events: none;
+}
   .voice-btn {
   background: linear-gradient(135deg, #00d2ff, #007aff);
   border: none;
@@ -492,11 +499,9 @@ const dashStyles = `
 }
 
 
-  .ambient-glow {
-    position: fixed; top: 0; left: 50%; width: 50%; height: 50%;
-    background: radial-gradient(circle, rgba(0, 198, 255, 0.08), transparent 70%);
-    filter: blur(100px); transform: translateX(-50%);
-  }
+ .ambient-glow {
+  display: none; /* Temporarily disable this to see if it's causing the brightness */
+}
 
   .dash-content-wrapper {
     max-width: 1200px;
