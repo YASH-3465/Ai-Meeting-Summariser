@@ -1,3 +1,4 @@
+
 from transformers import MarianMTModel, MarianTokenizer
 
 class TextTranslator:
