@@ -2,8 +2,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import router
+import logging
+from logging_config import IgnoreStatusEndpointFilter
+
 
 app = FastAPI(title="MeetWise API")
+# 🔕 Hide noisy polling logs but keep access logs
+access_logger = logging.getLogger("uvicorn.access")
+access_logger.addFilter(IgnoreStatusEndpointFilter())
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
+app.include_router(router,prefix="/api")
 
 @app.get("/")
 def health():

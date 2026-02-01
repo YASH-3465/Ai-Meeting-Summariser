@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ToggleSwitch from "../components/ToggleSwitch";
@@ -19,6 +19,47 @@ const speechRef = useRef(null);
 
 
 const [isSelectingFile, setIsSelectingFile] = useState(false);
+
+
+
+useEffect(() => {
+  const savedResult = localStorage.getItem("meetwise_last_result");
+  const savedJobId = localStorage.getItem("meetwise_job_id");
+
+  // 🔹 Case 1: Result already exists → restore it
+  if (savedResult && !savedJobId) {
+    setResult(JSON.parse(savedResult));
+    setStage("results");
+    return;
+  }
+
+  // 🔹 Case 2: Job is still running → resume polling
+  if (savedJobId) {
+    fetch(`http://127.0.0.1:8000/api/status/${savedJobId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "processing") {
+          setStage("processing");
+          pollJobStatus(savedJobId);
+        } else if (data.status === "completed") {
+          setResult(data.result);
+          setStage("results");
+          localStorage.setItem(
+            "meetwise_last_result",
+            JSON.stringify(data.result)
+          );
+          localStorage.removeItem("meetwise_job_id");
+        } else {
+          localStorage.removeItem("meetwise_job_id");
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("meetwise_job_id");
+      });
+  }
+}, []);
+
+
 
 const speakSummary = () => {
   if (!result?.summary) return;
@@ -86,6 +127,44 @@ const handleFileSelect = (e) => {
   sendToBackend(selectedFile);
 };
 
+const pollJobStatus = async (jobId) => {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/status/${jobId}`);
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    if (data.status === "completed") {
+      setResult(data.result);
+      setStage("results");
+
+      localStorage.setItem(
+    "meetwise_last_result",
+    JSON.stringify(data.result)
+  );
+
+      localStorage.removeItem("meetwise_job_id");
+
+      return;
+    }
+
+    if (data.status === "failed") {
+      alert("Processing failed");
+      setStage("idle");
+        localStorage.removeItem("meetwise_job_id");
+  
+      return;
+    }
+
+    // still processing → poll again
+    setTimeout(() => pollJobStatus(jobId), 2000);
+
+  } catch (err) {
+    console.error("Polling error:", err);
+  }
+};
+
+
 
 const sendToBackend = async (file) => {
   const formData = new FormData();
@@ -105,8 +184,12 @@ const sendToBackend = async (file) => {
     }
 
    const data = await response.json();
-setResult(data);
-setStage("results");
+
+localStorage.setItem("meetwise_job_id", data.job_id);
+setResult(null);
+setStage("processing");
+pollJobStatus(data.job_id);
+
 
   } catch (error) {
   console.error("UPLOAD ERROR:", error);
@@ -235,7 +318,7 @@ setStage("results");
     </>
   )}
 
-{stage === "results" && result && (
+{stage === "results" && result?.summary && (
   <>
     <p className="highlight">{result.summary}</p>
 
@@ -270,16 +353,22 @@ setStage("results");
 
     {stage === "processing" && <div className="skeleton-line" />}
 
-    {stage === "results" && result && result.actions.length === 0 && (
-      <p style={{ color: "#666" }}>No action items detected.</p>
-    )}
+    {stage === "results" &&
+  (!result?.actions || result.actions.length === 0) && (
+    <p style={{ color: "#666" }}>No action items detected.</p>
+)}
 
-    {stage === "results" && result && result.actions.map((a, i) => (
-      <div className="action-row" key={i}>
-        ✓ {a.action}
-        {a.deadline && <span style={{ color: "#00d2ff" }}> — {a.deadline}</span>}
-      </div>
-    ))}
+
+    {stage === "results" &&
+  result?.actions?.map((a, i) => (
+    <div className="action-row" key={i}>
+      ✓ {a.action}
+      {a.deadline && (
+        <span style={{ color: "#00d2ff" }}> — {a.deadline}</span>
+      )}
+    </div>
+))}
+
 
   </div>
 </div>
