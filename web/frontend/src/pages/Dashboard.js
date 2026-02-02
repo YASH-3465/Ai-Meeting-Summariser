@@ -5,6 +5,17 @@ import { useNavigate } from "react-router-dom";
 import ToggleSwitch from "../components/ToggleSwitch";
 import AIAssistant from "../components/AIAssistant";
 import HeroShaderBackground from "./HeroShaderBackground";
+import ProcessingLoader from "../components/ProcessingLoader";
+
+
+
+const processingSteps = [
+  "Reading audio file…",
+  "Transcribing speech…",
+  "Analyzing language…",
+  "Generating summary…",
+  "Extracting action items…"
+];
 
 
 export default function Dashboard() {
@@ -16,49 +27,125 @@ const [translate, setTranslate] = useState(false);
 const [notify, setNotify] = useState(false);
 const [isSpeaking, setIsSpeaking] = useState(false);
 const speechRef = useRef(null);
-
-
+//const [eta, setEta] = useState(45); // seconds (soft estimate)
 const [isSelectingFile, setIsSelectingFile] = useState(false);
+const [eta, setEta] = useState(32);
+const [processingPhase, setProcessingPhase] = useState("transcribing");
+const phaseIndexRef = useRef(0);
+const phaseStartRef = useRef(null);
+const processingStartedRef =useRef(false)
+
+
+const dynamicProcessingLabel = (() => {
+  switch (processingPhase) {
+    case "transcribing":
+      return "Transcribing audio…";
+    case "summarizing":
+      return "Generating summary…";
+    case "extracting":
+      return "Extracting action items…";
+    default:
+      return "Analyzing meeting…";
+  }
+})();
+
+
+const estimateProcessingTime = (meetingMinutes) => {
+  // Based on real measured pipeline timings (CPU)
+  const whisperTime = meetingMinutes * 20; // sec
+  const nlpBuffer = 12;                     // sec (summary + actions)
+  return Math.round(whisperTime + nlpBuffer);
+};
+
 
 
 
 useEffect(() => {
-  const savedResult = localStorage.getItem("meetwise_last_result");
   const savedJobId = localStorage.getItem("meetwise_job_id");
 
-  // 🔹 Case 1: Result already exists → restore it
-  if (savedResult && !savedJobId) {
-    setResult(JSON.parse(savedResult));
-    setStage("results");
+  // 🔥 Cold start rule:
+  // Only resume if a job was IN PROGRESS
+  if (!savedJobId) {
+    localStorage.removeItem("meetwise_last_result");
+    setResult(null);
+    setStage("idle");
     return;
   }
 
-  // 🔹 Case 2: Job is still running → resume polling
-  if (savedJobId) {
-    fetch(`http://127.0.0.1:8000/api/status/${savedJobId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "processing") {
-          setStage("processing");
-          pollJobStatus(savedJobId);
-        } else if (data.status === "completed") {
-          setResult(data.result);
-          setStage("results");
-          localStorage.setItem(
-            "meetwise_last_result",
-            JSON.stringify(data.result)
-          );
-          localStorage.removeItem("meetwise_job_id");
-        } else {
-          localStorage.removeItem("meetwise_job_id");
-        }
-      })
-      .catch(() => {
+  // 🔹 Verify job with backend
+  fetch(`http://127.0.0.1:8000/api/status/${savedJobId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "processing") {
+        setStage("processing");
+        pollJobStatus(savedJobId);
+      } else {
+        // 🔥 Job is stale or completed → reset UI
         localStorage.removeItem("meetwise_job_id");
-      });
-  }
+        localStorage.removeItem("meetwise_last_result");
+        setResult(null);
+        setStage("idle");
+      }
+    })
+    .catch(() => {
+      localStorage.removeItem("meetwise_job_id");
+      localStorage.removeItem("meetwise_last_result");
+      setResult(null);
+      setStage("idle");
+    });
 }, []);
 
+
+
+useEffect(() => {
+  if (stage !== "processing") {
+    processingStartedRef.current = false;
+    return;
+  }
+
+  // 🔒 Prevent restarting phases on re-render
+  if (processingStartedRef.current) return;
+  processingStartedRef.current = true;
+
+  const phases = [
+    { name: "transcribing", duration: 18 },
+    { name: "summarizing", duration: 10 },
+    { name: "extracting", duration: 9 }
+  ];
+
+  phaseIndexRef.current = 0;
+  phaseStartRef.current = Date.now();
+
+  setProcessingPhase(phases[0].name);
+  setEta(phases.reduce((a, b) => a + b.duration, 0));
+
+  const interval = setInterval(() => {
+    const elapsed = Math.floor(
+      (Date.now() - phaseStartRef.current) / 1000
+    );
+
+    const current = phases[phaseIndexRef.current];
+
+    let remaining =
+      phases
+        .slice(phaseIndexRef.current)
+        .reduce((a, b) => a + b.duration, 0) - elapsed;
+
+    if (remaining <= 6) remaining = Math.max(4, remaining + 1);
+    setEta(remaining);
+
+    if (
+      phaseIndexRef.current < phases.length - 1 &&
+      elapsed >= current.duration
+    ) {
+      phaseIndexRef.current += 1;
+      phaseStartRef.current = Date.now();
+      setProcessingPhase(phases[phaseIndexRef.current].name);
+    }
+  }, 1200);
+
+  return () => clearInterval(interval);
+}, [stage]);
 
 
 const speakSummary = () => {
@@ -119,13 +206,29 @@ const fileInputRef = useRef(null);
   };
 
 const handleFileSelect = (e) => {
+
+  const roughMeetingMinutes = 2; // 🔧 adjust later dynamically
+  const estimatedSeconds = estimateProcessingTime(roughMeetingMinutes);
+
   const selectedFile = e.target.files[0];
   if (!selectedFile) return;
 
+  // 🔥 CLEAR PREVIOUS RUN COMPLETELY
+  setResult(null);
+  setStage("processing");
+
+  setEta(estimatedSeconds);
+
+  processingStartedRef.current = false;
+  setProcessingPhase("transcribing"); // ✅ RESET PHASE
+
+  localStorage.removeItem("meetwise_last_result");
+  localStorage.removeItem("meetwise_job_id");
+
   setFileName(selectedFile.name);
-  setStage("processing"); 
   sendToBackend(selectedFile);
 };
+
 
 const pollJobStatus = async (jobId) => {
   try {
@@ -135,9 +238,9 @@ const pollJobStatus = async (jobId) => {
     const data = await res.json();
 
     if (data.status === "completed") {
+      setEta(null);
       setResult(data.result);
       setStage("results");
-
       localStorage.setItem(
     "meetwise_last_result",
     JSON.stringify(data.result)
@@ -295,12 +398,18 @@ pollJobStatus(data.job_id);
                 {/* TOP FILE INFO */}
                 <div className="file-strip">
                   <div className="file-meta">
-                    <span className="tag">PROCESSING</span>
+                    <span className={`tag ${stage}`}>
+                        {stage === "processing" ? "PROCESSING" : "COMPLETED"}
+                    </span>
+
                     <h3>{fileName}</h3>
                   </div>
-                  <div className="stage-indicator">
-                    {stage === "processing" ? "Neural Mapping..." : "Analysis Ready"}
-                  </div>
+              <div className={`stage-indicator ${stage}`}>
+  {stage === "processing" && "Analyzing meeting… please wait"}
+  {stage === "results" && "Analysis completed successfully"}
+</div>
+
+
                 </div>
 
                 <div className="results-layout">
@@ -308,15 +417,14 @@ pollJobStatus(data.job_id);
                   <div className="glass-panel transcript-box">
                     <div className="panel-label">Live Transcription</div>
                     <div className="scrolling-text">
-  {stage === "processing" && (
-    <>
-      <p>Reading audio file…</p>
-      <p>Transcribing speech…</p>
-      <p>Analyzing language…</p>
-      <p>Generating summary…</p>
-      <div className="loader-dots"><span>.</span><span>.</span><span>.</span></div>
-    </>
-  )}
+                    {stage === "processing" && (
+  <ProcessingLoader
+    label={dynamicProcessingLabel}
+    eta={eta}
+  />
+)}
+
+
 
 {stage === "results" && result?.summary && (
   <>
@@ -336,6 +444,8 @@ pollJobStatus(data.job_id);
   </>
 )}
 
+
+
 </div>
 
                   </div>
@@ -343,9 +453,20 @@ pollJobStatus(data.job_id);
                   {/* RIGHT: INSIGHTS */}
                   <div className="insights-stack">
                     <div className="glass-panel stat-card">
-                      <div className="panel-label">Translation</div>
-                      <div className="lang-pair">ES <span>→</span> EN</div>
-                    </div>
+  <div className="panel-label">Language</div>
+
+  {translate ? (
+  <div className="lang-pair active-lang">
+    Original → English
+  </div>
+) : (
+  <div className="lang-pair inactive-lang">
+    Original language only
+  </div>
+)}
+
+</div>
+
                     
                    <div className="glass-panel actions-card">
   <div className="panel-label">Action Items</div>
@@ -592,6 +713,19 @@ const dashStyles = `
   display: none; /* Temporarily disable this to see if it's causing the brightness */
 }
 
+.active-lang {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #00d2ff;
+}
+
+.inactive-lang {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #888;
+}
+
+
   .dash-content-wrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -614,6 +748,8 @@ const dashStyles = `
     padding: 10px 20px; border-radius: 100px; font-size: 0.8rem;
     display: flex; align-items: center; gap: 10px; color: #888;
   }
+
+
 
   .status-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; }
 
@@ -648,19 +784,242 @@ const dashStyles = `
     border: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;
   }
   .file-tag { color: #00d2ff; font-weight: 800; font-size: 0.7rem; letter-spacing: 2px; }
+ .tag {
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.dot-group {
+  transform-origin: 50% 50%;
+  animation: spin 1.6s linear infinite;
+}
+
+.dot-loader {
+  animation: dash-spin 1.4s ease-in-out infinite;
+}
+
+@keyframes dash-spin {
+  0% {
+    stroke-dashoffset: 0;
+    transform: rotate(0deg);
+    transform-origin: 50% 50%;
+  }
+  50% {
+    stroke-dashoffset: -120;
+    transform: rotate(180deg);
+  }
+  100% {
+    stroke-dashoffset: -240;
+    transform: rotate(360deg);
+  }
+}
+
+.dot-loader circle:last-child {
+  animation: dash-move 1.4s ease-in-out infinite;
+}
+
+@keyframes dash-move {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -240;
+  }
+}
+
+/* ==== ADVANCED WINDOWS-STYLE LOADER ==== */
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 220px;
+}
+
+.modern-loader {
+  width: 64px;
+  height: 64px;
+  animation: master-rotate 1.6s linear infinite;
+}
+
+
+.dot {
+  fill: #0078d4;
+   filter: drop-shadow(0 0 6px rgba(0, 120, 212, 0.6));
+  opacity: 0.25;
+  animation: pulse 1.4s ease-in-out infinite;
+  transform-origin: 50px 50px; /* 🔒 axis lock */
+}
+
+
+.dot:nth-child(1)  { animation-delay: 0s; }
+.dot:nth-child(2)  { animation-delay: 0.1s; }
+.dot:nth-child(3)  { animation-delay: 0.2s; }
+.dot:nth-child(4)  { animation-delay: 0.3s; }
+.dot:nth-child(5)  { animation-delay: 0.4s; }
+.dot:nth-child(6)  { animation-delay: 0.5s; }
+.dot:nth-child(7)  { animation-delay: 0.6s; }
+.dot:nth-child(8)  { animation-delay: 0.7s; }
+.dot:nth-child(9)  { animation-delay: 0.8s; }
+.dot:nth-child(10) { animation-delay: 0.9s; }
+.dot:nth-child(11) { animation-delay: 1.0s; }
+.dot:nth-child(12) { animation-delay: 1.1s; }
+
+.processing-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.eta-label {
+  font-size: 0.8rem;
+  color: #8fbce8;
+}
+
+@keyframes master-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dot-fade {
+  0%   { opacity: 0.15; }
+  20%  { opacity: 0.9; }
+  40%  { opacity: 0.15; }
+  100% { opacity: 0.15; }
+}
+
+
+.tag.processing {
+  background: linear-gradient(135deg, #ff9f1c, #ffbf69);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 159, 28, 0.6);
+  animation: pulseGlow 1.8s infinite;
+}
+
+.live-processing {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.progress-ring {
+  animation: spin 1.4s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.processing-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.processing-text strong {
+  color: #00d2ff;
+  font-weight: 700;
+}
+
+.processing-text span {
+  color: #777;
+  font-size: 0.8rem;
+}
+
+
+.tag.results {
+  background: linear-gradient(135deg, #00ffcc, #00d2ff);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.8);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.25;
+    r: 2.6;
+  }
+  50% {
+    opacity: 1;
+    r: 3.4;
+  }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 10px rgba(255,159,28,0.4); }
+  50% { box-shadow: 0 0 22px rgba(255,159,28,0.9); }
+  100% { box-shadow: 0 0 10px rgba(255,159,28,0.4); }
+}
+
+.stage-indicator {
+  font-weight: 700;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.stage-indicator.processing {
+  color: #ffbf69;
+}
+
+.stage-indicator.results {
+  color: #00ffcc;
+}
+
 
   .results-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; }
   .glass-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 30px; backdrop-filter: blur(10px); }
   .panel-label { font-size: 0.7rem; color: #444; text-transform: uppercase; font-weight: 800; margin-bottom: 20px; letter-spacing: 1px; }
 
-  .scrolling-text { height: 200px; color: #888; overflow: hidden; }
-  .highlight { color: #fff; border-left: 2px solid #00d2ff; padding-left: 15px; margin: 15px 0; }
+  .scrolling-text {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 10px;
+  color: #cfcfcf;
+  line-height: 1.6;
+  height:260px;
+}
+
+/* Nice scrollbar */
+.scrolling-text::-webkit-scrollbar {
+  width: 6px;
+}
+.scrolling-text::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.4);
+  border-radius: 10px;
+}
+
+  .highlight {
+  color: #ffffff;
+  border-left: 3px solid #00d2ff;
+  padding-left: 18px;
+  margin: 10px 0 20px;
+  font-size: 0.95rem;
+}
+
 
   .insights-stack { display: flex; flex-direction: column; gap: 24px; }
   .lang-pair { font-size: 2rem; font-weight: 800; }
   .lang-pair span { color: #00d2ff; }
 
-  .action-row { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 0.9rem; }
+
+
+  .action-row {
+  background: rgba(255,255,255,0.03);
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  border-left: 3px solid #00d2ff;
+}
+
 
   .reset-btn {
     align-self: center; background: #fff; color: #000; border: none;
