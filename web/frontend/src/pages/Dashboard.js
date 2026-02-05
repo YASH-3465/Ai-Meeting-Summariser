@@ -34,6 +34,8 @@ const [processingPhase, setProcessingPhase] = useState("transcribing");
 const phaseIndexRef = useRef(0);
 const phaseStartRef = useRef(null);
 const processingStartedRef =useRef(false)
+const [inputType, setInputType] = useState("media"); // media | mom
+
 
 
 const dynamicProcessingLabel = (() => {
@@ -215,9 +217,12 @@ const handleFileSelect = (e) => {
 
   // 🔥 CLEAR PREVIOUS RUN COMPLETELY
   setResult(null);
-  setStage("processing");
 
+if (inputType === "media") {
+  setStage("processing");
   setEta(estimatedSeconds);
+}
+
 
   processingStartedRef.current = false;
   setProcessingPhase("transcribing"); // ✅ RESET PHASE
@@ -226,7 +231,12 @@ const handleFileSelect = (e) => {
   localStorage.removeItem("meetwise_job_id");
 
   setFileName(selectedFile.name);
+  if (inputType === "mom") {
+  sendMoMToBackend(selectedFile);
+} else {
   sendToBackend(selectedFile);
+}
+
 };
 
 
@@ -303,6 +313,46 @@ pollJobStatus(data.job_id);
 
 };
 
+
+const sendMoMToBackend = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("notify",notify ? "true":"false");
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/process/mom",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("MoM processing failed");
+    }
+
+    const data = await response.json();
+
+    // 🔥 DIRECT RESULT (NO JOB, NO POLLING)
+    setResult({
+      summary: data.summary,
+      agenda: data.agenda_items,
+      actions: data.action_items
+    });
+
+    setStage("results");
+    setEta(null);
+
+  } catch (error) {
+    console.error("MoM upload error:", error);
+    alert("Failed to process Minutes of Meeting");
+    setStage("idle");
+  }
+};
+
+
+
   return (
     <div className="dash-root">
       <style>{dashStyles}</style>
@@ -339,6 +389,26 @@ pollJobStatus(data.job_id);
 
         {/* MAIN INTERACTIVE AREA */}
         <div className="main-grid">
+
+          {/* MODE TABS */}
+{stage === "idle" && (
+  <div className="mode-tabs">
+    <button
+      className={inputType === "media" ? "mode-tab active" : "mode-tab"}
+      onClick={() => setInputType("media")}
+    >
+      🎧 Audio / Video
+    </button>
+
+    <button
+      className={inputType === "mom" ? "mode-tab active" : "mode-tab"}
+      onClick={() => setInputType("mom")}
+    >
+      📄 Minutes of Meeting
+    </button>
+  </div>
+)}
+
           
           <AnimatePresence mode="wait">
             {stage === "idle" ? (
@@ -357,13 +427,29 @@ pollJobStatus(data.job_id);
                   onChange={handleFileSelect} 
                   style={{ display: "none" }} 
                 />
+                {/* INPUT TYPE SELECTOR (Media / MoM) */}
+{/* MODE SELECTOR BAR */}
+
+
+
                 <div className="upload-icon-container">
                   <div className="pulse-circle" />
                   <span className="icon">↑</span>
                 </div>
-                <h2>Start New Analysis</h2>
-                <p>Click anywhere to upload audio or video</p>
-                <div className="supported-formats">MP3 • WAV • MP4 • MOV</div>
+               <h2>Start New Analysis</h2>
+
+<p>
+  {inputType === "media"
+    ? "Click anywhere to upload audio or video file"
+    : "Click anywhere to upload meeting document"}
+</p>
+
+<div className="supported-formats">
+  {inputType === "media"
+    ? "MP3 • WAV • MP4 • MOV"
+    : "PDF • DOCX • TXT"}
+</div>
+
       <div
   style={{
     marginTop: "30px",
@@ -483,12 +569,22 @@ pollJobStatus(data.job_id);
     {stage === "results" &&
   result?.actions?.map((a, i) => (
     <div className="action-row" key={i}>
-      ✓ {a.action}
+      ✓ {a.action || a.text}
+
       {a.deadline && (
-        <span style={{ color: "#00d2ff" }}> — {a.deadline}</span>
+        <span style={{ color: "#00d2ff" }}>
+          {" "}— {a.deadline}
+        </span>
+      )}
+
+      {a.responsibility && (
+        <span style={{ color: "#aaa", marginLeft: "8px" }}>
+          ({a.responsibility})
+        </span>
       )}
     </div>
 ))}
+
 
 
   </div>
@@ -723,6 +819,66 @@ const dashStyles = `
   font-size: 1.2rem;
   font-weight: 700;
   color: #888;
+}
+
+
+
+.mode-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.mode-tab {
+  background: transparent;
+  border: none;
+  padding: 10px 6px;
+  font-size: 1rem;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.mode-tab:hover {
+  color: #fff;
+}
+
+.mode-tab.active {
+  color: #00d2ff;
+  border-bottom: 2px solid #00d2ff;
+}
+
+.mode-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  background: transparent;
+  color: #ccc;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  background: rgba(0, 210, 255, 0.08);
+  color: #fff;
+}
+
+.mode-btn.active {
+  background: rgba(0, 210, 255, 0.18);
+  border-color: #00d2ff;
+  color: #00d2ff;
+}
+.mode-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 28px;
+  padding: 10px 0;
 }
 
 
