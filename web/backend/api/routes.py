@@ -10,6 +10,10 @@ from src.mom.loader import load_mom_file
 from src.mom.extractor import extract_agenda_and_actions
 from src.mom.extractor import generate_mom_summary
 from src.notification.mom_mailer import send_mom_email
+from fastapi.responses import FileResponse
+from src.utils.pdf_generator import generate_meeting_pdf_bytes
+from fastapi.responses import StreamingResponse
+
 
 
 
@@ -133,6 +137,21 @@ def run_pipeline(job_id: str, file_path: str,translate: bool, notify: bool):
         )
 
 
+@router.post("/export/pdf")
+async def export_pdf(data: dict):
+    pdf_buffer = generate_meeting_pdf_bytes(
+        filename=data.get("filename", "Meeting"),
+        summary=data["summary"],
+        action_items=data["action_items"]
+    )
+
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=meeting_summary.pdf"
+        }
+    )
 
 
 
